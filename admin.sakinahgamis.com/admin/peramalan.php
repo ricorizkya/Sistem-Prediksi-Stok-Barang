@@ -54,54 +54,54 @@ if(isset($_POST['cek'])) {
 
 
 //Fuzzifikasi Varibel Stok
-if($cekstok >= 0 && $cekstok <=25) {
+if($cekstok >= 0 && $cekstok <=10) {
   $f_stok_minim   = 1;
   $f_stok_sedang  = 0;
   $f_stok_banyak  = 0;
-}else if($cekstok > 25 && $cekstok <=50) {
-  $f_stok_minim   = (50-$cekstok)/(50-25);
+}else if($cekstok > 10 && $cekstok <=20) {
+  $f_stok_minim   = 1;
   $f_stok_sedang  = 0;
   $f_stok_banyak  = 0;
-}else if($cekstok > 50 && $cekstok <= 75) {
-  $f_stok_minim   = 0;
-  $f_stok_sedang  = ($cekstok-50)/(75-50);
+}else if($cekstok > 20 && $cekstok <= 30) {
+  $f_stok_minim   = (30-$cekstok)/(30-20);
+  $f_stok_sedang  = ($cekstok-20)/(30-20);
   $f_stok_banyak  = 0;
-}else if($cekstok > 75 && $cekstok <= 100) {
+}else if($cekstok > 30 && $cekstok <= 40) {
   $f_stok_minim   = 0;
   $f_stok_sedang  = 1;
   $f_stok_banyak  = 0;
-}else if($cekstok > 100 && $cekstok <= 125) {
+}else if($cekstok > 40 && $cekstok <= 50) {
   $f_stok_minim   = 0;
-  $f_stok_sedang  = (125-$cekstok)/(125-100);
-  $f_stok_banyak  = ($cekstok-100)/(125-100);
-}else if($cekstok > 125) {
+  $f_stok_sedang  = (50-$cekstok)/(50-40);
+  $f_stok_banyak  = ($cekstok-40)/(50-40);
+}else if($cekstok > 50) {
   $f_stok_minim   = 0;
   $f_stok_sedang  = 0;
   $f_stok_banyak  = 1;
 }
 
 //Fuzzifikasi Varibel Penjualan
-if($jumlahpenjualan >= 0 && $jumlahpenjualan <=20) {
+if($jumlahpenjualan >= 0 && $jumlahpenjualan <=10) {
     $f_penjualan_sedikit    = 1;
     $f_penjualan_sedang     = 0;
     $f_penjualan_banyak     = 0;
-}else if($jumlahpenjualan > 20 && $jumlahpenjualan <=40) {
+}else if($jumlahpenjualan > 10 && $jumlahpenjualan <=20) {
     $f_penjualan_sedikit    = 1;
     $f_penjualan_sedang     = 0;
     $f_penjualan_banyak     = 0;
-}else if($jumlahpenjualan > 40 && $jumlahpenjualan <=60) {
-    $f_penjualan_sedikit    = (60-$jumlahpenjualan)/(60-40);
-    $f_penjualan_sedang     = ($jumlahpenjualan-40)/(60-40);
+}else if($jumlahpenjualan > 20 && $jumlahpenjualan <=30) {
+    $f_penjualan_sedikit    = (30-$jumlahpenjualan)/(30-20);
+    $f_penjualan_sedang     = ($jumlahpenjualan-20)/(30-20);
     $f_penjualan_banyak     = 0;
-}else if($jumlahpenjualan > 60 && $jumlahpenjualan <=80) {
+}else if($jumlahpenjualan > 30 && $jumlahpenjualan <=40) {
     $f_penjualan_sedikit    = 0;
     $f_penjualan_sedang     = 1;
     $f_penjualan_banyak     = 0;
-}else if($jumlahpenjualan > 80 && $jumlahpenjualan <=100) {
+}else if($jumlahpenjualan > 40 && $jumlahpenjualan <=50) {
     $f_penjualan_sedikit    = 0;
-    $f_penjualan_sedang     = (100-$jumlahpenjualan)/(100-80);
-    $f_penjualan_banyak     = ($jumlahpenjualan-60)/(100-80);
-}else if($jumlahpenjualan > 100) {
+    $f_penjualan_sedang     = (50-$jumlahpenjualan)/(50-40);
+    $f_penjualan_banyak     = ($jumlahpenjualan-40)/(50-40);
+}else if($jumlahpenjualan > 50) {
     $f_penjualan_sedikit    = 0;
     $f_penjualan_sedang     = 0;
     $f_penjualan_banyak     = 1;
@@ -109,50 +109,85 @@ if($jumlahpenjualan >= 0 && $jumlahpenjualan <=20) {
 
 //Inferensial
 //RULE 1
-$f1_produksi_sedikit = min($f_stok_minim,$f_penjualan_sedikit);
+$f1_produksi_sedikit = min($f_penjualan_sedikit, $f_stok_minim);
 //RULE 2
-$f2_produksi_sedang  = min($f_stok_minim,$f_penjualan_sedang);
+$f2_no_produksi  = min($f_penjualan_sedikit, $f_stok_sedang);
 //RULE 3
-$f3_produksi_banyak  = min($f_stok_minim,$f_penjualan_banyak);
+$f3_no_produksi  = min($f_penjualan_sedikit, $f_stok_banyak);
 //RULE 4
-$f4_produksi_sedikit = min($f_stok_sedang,$f_penjualan_sedikit);
+$f4_produksi_sedang = min($f_penjualan_sedang, $f_stok_minim);
 //RULE 5
-$f5_produksi_sedang  = min($f_stok_sedang,$f_penjualan_sedang);
+$f5_produksi_sedikit  = min($f_penjualan_sedang, $f_stok_sedang);
 //RULE 6
-$f6_produksi_banyak  = min($f_stok_sedang,$f_penjualan_banyak);
+$f6_no_produksi  = min($f_penjualan_sedang, $f_stok_banyak);
 //RULE 7
-$f7_no_produksi      = min($f_stok_banyak,$f_penjualan_sedikit);
+$f7_produksi_banyak  = min($f_penjualan_banyak, $f_stok_minim);
 //RULE 8
-$f8_produksi_sedikit = min($f_stok_banyak,$f_penjualan_sedang);
+$f8_produksi_sedang = min($f_penjualan_banyak, $f_stok_sedang);
 //RULE 9
-$f9_produksi_banyak  = min($f_stok_banyak,$f_penjualan_banyak);
+$f9_produksi_sedikit  = min($f_penjualan_banyak, $f_stok_banyak);
+
 //Nilai Fuzzy No Produksi
-$fuzzy_no_produksi      = $f7_no_produksi;
+$fuzzy_no_produksi      = max($f2_no_produksi,$f3_no_produksi,$f6_no_produksi);
 //Nilai Fuzzy Produksi Sedikit
-$fuzzy_produksi_sedikit = max($f1_produksi_sedikit,$f4_produksi_sedikit,$f8_produksi_sedikit,$f5_produksi_sedang);
+$fuzzy_produksi_sedikit = max($f1_produksi_sedikit,$f5_produksi_sedikit,$f9_produksi_sedikit);
 //Nilai Fuzzy Produksi Sedang
-$fuzzy_produksi_sedang  = max($f2_produksi_sedang,$f9_produksi_banyak,$f6_produksi_banyak);
+$fuzzy_produksi_sedang  = max($f4_produksi_sedang,$f8_produksi_sedang);
 //Nilai Fuzzy Produksi Banyak
-$fuzzy_produksi_banyak  = $f3_produksi_banyak;
+$fuzzy_produksi_banyak  = $f7_produksi_banyak;
 
 //Defuzzyfikasi
-if($fuzzy_no_produksi!=0 && $fuzzy_produksi_sedikit!=0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0){
-    $hasil=50/(($fuzzy_no_produksi/$fuzzy_produksi_sedikit)+1);
-}else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit!=0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak==0) {
-    $hasil=100/(($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang)+1);
-}else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak!=0) {
-    $hasil=150/(($fuzzy_produksi_sedang/$fuzzy_produksi_banyak)+1);
-}else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak!=0) {
-    $hasil=150*$fuzzy_produksi_banyak;
-}else if($fuzzy_no_produksi!=0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0) {
-    $hasil=25*$fuzzy_no_produksi;
-}else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit!=0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0) {
-    $hasil=50*$fuzzy_produksi_sedikit;
-}else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak==0) {
-    $hasil=100*$fuzzy_produksi_sedang;
+if($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+    $hasil = 0 * $fuzzy_no_produksi;
+}elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+    $hasil = 15 * $fuzzy_produksi_sedikit;
+}elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
+    $hasil = 25 * $fuzzy_produksi_sedang;
+}elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak != 0) {
+    $hasil = 35 * $fuzzy_produksi_banyak;
+}elseif($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+    $hasil = 15 / (($fuzzy_no_produksi/$fuzzy_produksi_sedikit) + 1);
+}elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
+    $hasil = 25 / (($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang) + 1);
+}elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak != 0) {
+    $hasil = 35 / (($fuzzy_produksi_sedang/$fuzzy_produksi_banyak) + 1);
 }else {
-    $hasil=NULL;
+    $hasil = 999;
 }
+
+
+// if($fuzzy_produksi_sedikit!=0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0){
+//     $hasil=10/(($fuzzy_no_produksi/$fuzzy_produksi_sedikit)+1);
+// }else if($fuzzy_produksi_sedikit ==0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak==0) {
+//     $hasil=20/(($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang)+1);
+// }else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak!=0) {
+//     $hasil=30/(($fuzzy_produksi_sedang/$fuzzy_produksi_banyak)+1);
+// }else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak!=0) {
+//     $hasil=40*$fuzzy_produksi_banyak;
+// }else if($fuzzy_no_produksi!=0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0) {
+//     $hasil=5*$fuzzy_no_produksi;
+// }else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit!=0 && $fuzzy_produksi_sedang==0 && $fuzzy_produksi_banyak==0) {
+//     $hasil=10*$fuzzy_produksi_sedikit;
+// }else if($fuzzy_no_produksi==0 && $fuzzy_produksi_sedikit==0 && $fuzzy_produksi_sedang!=0 && $fuzzy_produksi_banyak==0) {
+//     $hasil=20*$fuzzy_produksi_sedang;
+// }else {
+//     $hasil=NULL;
+// }
+
+echo "<br><br><br><br>";
+echo "Stok Minim = ". $f_stok_minim ."<br>";
+echo "Stok Sedang = ". $f_stok_sedang ."<br>";
+echo "Stok Banyak = ". $f_stok_banyak ."<br><br>";
+
+echo "Penjualan Minim = ". $f_penjualan_sedikit ."<br>";
+echo "Penjualan Sedang = ". $f_penjualan_sedang ."<br>";
+echo "Penjualan Banyak = ". $f_penjualan_banyak ."<br><br>";
+
+echo "Fuzzy Produksi No = " .$fuzzy_no_produksi. "<br>";
+echo "Fuzzy Produksi Minim = " .$fuzzy_produksi_sedikit. "<br>";
+echo "Fuzzy Produksi Sedang = " .$fuzzy_produksi_sedang. "<br>";
+echo "Fuzzy Produksi Banyak = " .$f7_produksi_banyak. "<br><br>";
+
 
 ?>
 <!DOCTYPE html>

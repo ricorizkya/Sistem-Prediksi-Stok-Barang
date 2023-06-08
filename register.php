@@ -3,6 +3,32 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
   include 'koneksi.php';
+
+  if(isset($_POST['register'])) {
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $telepon = $_POST['telepon'];
+    $kelamin = $_POST['jenis_kelamin'];
+    $alamat = $_POST['alamat'];
+
+    $queryRegister = "INSERT INTO tb_user (nama_user, gender_user, telp_user, email_user, password, alamat_user) VALUES ('$nama', '$kelamin', '$telepon', '$email', '$password', '$alamat')";
+    $queryCekEmail = "SELECT * FROM tb_user WHERE email_user = '$email'";
+    
+    $resultRegister = mysqli_query($con, $queryRegister);
+    $resultCekEmail = mysqli_query($con, $queryCekEmail);
+
+    if(mysqli_num_rows($resultCekEmail) > 1) {
+        echo '<script>alert("Email sudah digunakan, Silahkan gunakan email lainnya!");</script>';
+    }else {
+        if($resultRegister) {
+            echo '<script>alert("Registrasi berhasil. Silakan login."); window.location.href = "login.php";</script>';
+            exit;
+        }else {
+            echo '<script>alert("Registrasi gagal. Silakan coba lagi.");</script>';
+        }
+    }
+  }
 ?>
 
 <!DOCTYPE html>
@@ -75,12 +101,11 @@ error_reporting(E_ALL);
                             <div class="card-body p-5 shadow-5 text-center">
                                 <h1>Sakinah Gamis<span style="color: #ce1212;">.</span></h1>
                                 <p>Lengkapi data diri anda dan dapatkan barang pilihan anda</p>
-                                <form>
-
+                                <form method="post" action="">
                                     <div class="form-outline mb-4">
                                         <div class="form-outline">
                                             <input type="text" id="form3Example1" class="form-control"
-                                                placeholder="Nama Lengkap" />
+                                                placeholder="Nama Lengkap" name="nama" />
                                         </div>
                                     </div>
 
@@ -88,20 +113,21 @@ error_reporting(E_ALL);
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="email" id="form3Example1" class="form-control"
-                                                    placeholder="E-Mail" />
+                                                    placeholder="E-Mail" name="email" />
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="password" id="form3Example2" class="form-control"
-                                                    placeholder="Password" />
+                                                    placeholder="Password" name="password" />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
-                                            <select class="form-select" aria-label="Default select example">
+                                            <select class="form-select" aria-label="Default select example"
+                                                name="jenis_kelamin">
                                                 <option selected>Jenis Kelamin</option>
                                                 <option value="Laki-Laki">Laki-Laki</option>
                                                 <option value="Perempuan">Perempuan</option>
@@ -110,7 +136,7 @@ error_reporting(E_ALL);
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="number" id="form3Example2" class="form-control"
-                                                    placeholder="Nomor Telepon" />
+                                                    placeholder="Nomor Telepon" name="telepon" />
                                             </div>
                                         </div>
                                     </div>
@@ -118,12 +144,13 @@ error_reporting(E_ALL);
                                     <div class="form-outline mb-4">
                                         <div class="form-outline">
                                             <textarea class="form-control" placeholder="Alamat Lengkap"
-                                                id="floatingTextarea" style="height: 100px;"></textarea>
+                                                id="floatingTextarea" name="alamat" style="height: 100px;"></textarea>
                                         </div>
                                     </div>
 
                                     <!-- Submit button -->
-                                    <button type="submit" class="btn btn-block mb-6" style="background-color: #ce1212; color: white;">
+                                    <button type="submit" class="btn btn-block mb-6" name="register"
+                                        style="background-color: #ce1212; color: white;">
                                         Register
                                     </button>
                                 </form>
@@ -132,8 +159,8 @@ error_reporting(E_ALL);
                     </div>
 
                     <div class="col-lg-6 mb-5 mb-lg-0">
-                        <img src="admin.sakinahgamis.com/admin/gambar/register.jpeg"
-                            class="w-100 rounded-4 shadow-4" alt="" />
+                        <img src="admin.sakinahgamis.com/admin/gambar/register.jpeg" class="w-100 rounded-4 shadow-4"
+                            alt="" />
                     </div>
                 </div>
             </div>

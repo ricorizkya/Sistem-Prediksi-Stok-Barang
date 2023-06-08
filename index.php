@@ -1,5 +1,7 @@
 <?php
   include 'koneksi.php';
+  session_start();
+  $email = $_SESSION['email'];
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +47,48 @@
 
 <body>
 
+    <?php
+        if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['email'])) {
+    ?>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="index.html" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <!-- <img src="assets/img/logo.png" alt=""> -->
+                <h1>Sakinah Gamis<span>.</span></h1>
+            </a>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="#hero">Beranda</a></li>
+                    <li><a href="#menu">Produk</a></li>
+                    <li><a href="#about">Tentang Kami</a></li>
+                    <li><a href="#contact">Kontak Kami</a></li>
+                </ul>
+            </nav><!-- .navbar -->
+
+            <a class="btn-book-a-table" href="login.php"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                </svg>&nbsp; Akun</a>
+            <a class="btn-book-a-table" href="login.php"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                </svg>&nbsp; Keranjang</a>
+            <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+            <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+        </div>
+    </header>
+    <!-- End Header -->
+
+    <?php
+    }else{
+    ?>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="container d-flex align-items-center justify-content-between">
@@ -84,8 +128,8 @@
                 </ul>
             </nav><!-- .navbar -->
 
-            <a class="btn-book-a-table" href="#book-a-table"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                    height="20" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+            <a class="btn-book-a-table" href="login.php"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
                     <path
                         d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
                 </svg>&nbsp; Login/Register</a>
@@ -93,7 +137,9 @@
             <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
 
         </div>
-    </header><!-- End Header -->
+    </header>
+    <!-- End Header -->
+    <?php } ?>
 
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="hero d-flex align-items-center section-bg">
@@ -148,7 +194,8 @@
                                 esensi dari hijab atau model fashion terbaru.
                             </p>
                             <div class="position-relative mt-4">
-                                <img src="assets/img/about-2.jpg" class="img-fluid" alt="">
+                                <img src="assets/img/Model_Kebaya_Modern_Hijab_Aksen_Bordir.width-800.jpg"
+                                    class="img-fluid" alt="">
                             </div>
                         </div>
                     </div>
@@ -318,7 +365,8 @@
 
                             <div class="col-lg-4 menu-item">
                                 <center>
-                                    <a href="assets/img/menu/menu-item-1.png" class="glightbox"><img
+                                    <a href="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
+                                        class="glightbox"><img
                                             src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
                                             style="height: 300px;" class="menu-img img-fluid" alt=""></a>
                                     <h4><?= $dataGamis['nama_produk'];?></h4>
@@ -351,7 +399,8 @@
 
                             <div class="col-lg-4 menu-item">
                                 <center>
-                                    <a href="assets/img/menu/menu-item-1.png" class="glightbox"><img
+                                    <a href="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
+                                        class="glightbox"><img
                                             src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
                                             style="height: 300px;" class="menu-img img-fluid" alt=""></a>
                                     <h4><?= $dataGamis['nama_produk'];?></h4>
@@ -385,7 +434,8 @@
 
                             <div class="col-lg-4 menu-item">
                                 <center>
-                                    <a href="assets/img/menu/menu-item-1.png" class="glightbox"><img
+                                    <a href="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
+                                        class="glightbox"><img
                                             src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataGamis['gambar_produk'];?>"
                                             style="height: 300px;" class="menu-img img-fluid" alt=""></a>
                                     <h4><?= $dataGamis['nama_produk'];?></h4>
@@ -408,7 +458,7 @@
         </section><!-- End Menu Section -->
 
         <!-- ======= Testimonials Section ======= -->
-        <section id="testimonials" class="testimonials section-bg">
+        <!-- <section id="testimonials" class="testimonials section-bg">
             <div class="container" data-aos="fade-up">
 
                 <div class="section-header">
@@ -446,7 +496,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
                         <div class="swiper-slide">
                             <div class="testimonial-item">
@@ -475,7 +525,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
                         <div class="swiper-slide">
                             <div class="testimonial-item">
@@ -504,7 +554,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
                         <div class="swiper-slide">
                             <div class="testimonial-item">
@@ -533,14 +583,14 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End testimonial item -->
+                        </div>
 
                     </div>
                     <div class="swiper-pagination"></div>
                 </div>
 
             </div>
-        </section><!-- End Testimonials Section -->
+        </section> -->
 
         <!-- ======= Events Section ======= -->
         <!-- <section id="events" class="events">

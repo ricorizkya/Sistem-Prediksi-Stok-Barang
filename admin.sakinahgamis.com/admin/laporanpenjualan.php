@@ -13,21 +13,6 @@ if (empty($_SESSION['username'])){
 $bulan = isset($_POST['bulan']);
 $tahun = isset($_POST['tahun']);
 
-if(isset($_POST['cari1'])) {
-    $bulan = $_POST['bulan'];
-    $tahun = $_POST['tahun'];
-    
-	$query1 = mysqli_query($con,"select * from tb_penjualan left join tb_produk on tb_penjualan.id_produk = tb_produk.id_produk WHERE MONTH(tb_penjualan.tgl)='$bulan' AND YEAR(tb_penjualan.tgl)='$tahun'");
-	$d = mysqli_fetch_array($query1);
-    if($d && $d['jumlah'] == NULL){
-	    echo "<script>alert('Tidak Ada Penjualan'); </script>";
-    }
-
-	// if($jumlah==NULL) {
-		
-	// }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -208,8 +193,197 @@ if(isset($_POST['cari1'])) {
                     </div>
                 </form>
                 <br>
+
+                <?php
+                        if(isset($_POST['cari1'])) {
+    $bulan = $_POST['bulan'];
+    $tahun = $_POST['tahun'];
+    
+	$query1 = mysqli_query($con,"select * from tb_penjualan left join tb_produk on tb_penjualan.id_produk = tb_produk.id_produk WHERE MONTH(tb_penjualan.tgl)='$bulan' AND YEAR(tb_penjualan.tgl)='$tahun'");
+	$d = mysqli_fetch_array($query1);
+    if($d && $d['jumlah'] == NULL){
+	    echo "<script>alert('Tidak Ada Penjualan'); </script>";
+    }
+    
+        // Query untuk mendapatkan semua id_produk
+        $query_produk = mysqli_query($con, "SELECT * FROM tb_produk");
+        
+        //Array untuk menyimpan nama produk
+        $array_nama_produk = array();
+    
+        // Array untuk menyimpan data $cekstok
+        $array_cekstok = array();
+
+        // Array untuk menyimpan data $jumlahPenjualan
+        $array_jumlahPenjualan = array();
+
+        // Array untuk menyimpan data $hasil
+        $array_hasil = array();
+        // Buat array untuk menyimpan hasil dari setiap id_produk
+        $hasil_array = array();
+    
+        // Loop untuk setiap id_produk
+        while ($row = mysqli_fetch_assoc($query_produk)) {
+            $produk = $row['id_produk'];
+    
+            $query_cekstok = mysqli_query($con, "SELECT * FROM `tb_stok` WHERE DATE(tgl)=LAST_DAY('$tahun-$bulan-01') AND id_produk=$produk AND status=0 ORDER BY id_stok DESC LIMIT 1;");
+            $s = mysqli_fetch_array($query_cekstok);
+            if($s && $s['stok_produk'] != ""){
+                $cekstok = $s['stok_produk'];
+            } else {
+                $cekstok = 0;
+            }
+    
+            $query_jumlahpesanan = mysqli_query($con, "SELECT SUM(jumlah) AS jumlah_penjualan FROM tb_penjualan WHERE MONTH(tgl)=$bulan AND id_produk=$produk");
+            $j = mysqli_fetch_array($query_jumlahpesanan);
+            $jumlahpenjualan = $j['jumlah_penjualan'];
+    
+            // Fuzzifikasi Stok
+            if($cekstok >= 0 && $cekstok <=10) {
+              $f_stok_minim   = 1;
+              $f_stok_sedang  = 0;
+              $f_stok_banyak  = 0;
+            }else if($cekstok > 10 && $cekstok <=20) {
+              $f_stok_minim   = 1;
+              $f_stok_sedang  = 0;
+              $f_stok_banyak  = 0;
+            }else if($cekstok > 20 && $cekstok <= 30) {
+              $f_stok_minim   = (30-$cekstok)/(30-20);
+              $f_stok_sedang  = ($cekstok-20)/(30-20);
+              $f_stok_banyak  = 0;
+            }else if($cekstok > 30 && $cekstok <= 40) {
+              $f_stok_minim   = 0;
+              $f_stok_sedang  = 1;
+              $f_stok_banyak  = 0;
+            }else if($cekstok > 40 && $cekstok <= 50) {
+              $f_stok_minim   = 0;
+              $f_stok_sedang  = (50-$cekstok)/(50-40);
+              $f_stok_banyak  = ($cekstok-40)/(50-40);
+            }else if($cekstok > 50) {
+              $f_stok_minim   = 0;
+              $f_stok_sedang  = 0;
+              $f_stok_banyak  = 1;
+            }
+            
+            //Fuzzifikasi Varibel Penjualan
+            if($jumlahpenjualan >= 0 && $jumlahpenjualan <=10) {
+                $f_penjualan_sedikit    = 1;
+                $f_penjualan_sedang     = 0;
+                $f_penjualan_banyak     = 0;
+            }else if($jumlahpenjualan > 10 && $jumlahpenjualan <=20) {
+                $f_penjualan_sedikit    = 1;
+                $f_penjualan_sedang     = 0;
+                $f_penjualan_banyak     = 0;
+            }else if($jumlahpenjualan > 20 && $jumlahpenjualan <=30) {
+                $f_penjualan_sedikit    = (30-$jumlahpenjualan)/(30-20);
+                $f_penjualan_sedang     = ($jumlahpenjualan-20)/(30-20);
+                $f_penjualan_banyak     = 0;
+            }else if($jumlahpenjualan > 30 && $jumlahpenjualan <=40) {
+                $f_penjualan_sedikit    = 0;
+                $f_penjualan_sedang     = 1;
+                $f_penjualan_banyak     = 0;
+            }else if($jumlahpenjualan > 40 && $jumlahpenjualan <=50) {
+                $f_penjualan_sedikit    = 0;
+                $f_penjualan_sedang     = (50-$jumlahpenjualan)/(50-40);
+                $f_penjualan_banyak     = ($jumlahpenjualan-40)/(50-40);
+            }else if($jumlahpenjualan > 50) {
+                $f_penjualan_sedikit    = 0;
+                $f_penjualan_sedang     = 0;
+                $f_penjualan_banyak     = 1;
+            }
+            
+            //Inferensial
+            //RULE 1
+            $f1_produksi_sedikit = min($f_penjualan_sedikit, $f_stok_minim);
+            //RULE 2
+            $f2_no_produksi  = min($f_penjualan_sedikit, $f_stok_sedang);
+            //RULE 3
+            $f3_no_produksi  = min($f_penjualan_sedikit, $f_stok_banyak);
+            //RULE 4
+            $f4_produksi_sedang = min($f_penjualan_sedang, $f_stok_minim);
+            //RULE 5
+            $f5_produksi_sedikit  = min($f_penjualan_sedang, $f_stok_sedang);
+            //RULE 6
+            $f6_no_produksi  = min($f_penjualan_sedang, $f_stok_banyak);
+            //RULE 7
+            $f7_produksi_banyak  = min($f_penjualan_banyak, $f_stok_minim);
+            //RULE 8
+            $f8_produksi_sedang = min($f_penjualan_banyak, $f_stok_sedang);
+            //RULE 9
+            $f9_produksi_sedikit  = min($f_penjualan_banyak, $f_stok_banyak);
+            
+            //Nilai Fuzzy No Produksi
+            $fuzzy_no_produksi      = max($f2_no_produksi,$f3_no_produksi,$f6_no_produksi);
+            //Nilai Fuzzy Produksi Sedikit
+            $fuzzy_produksi_sedikit = max($f1_produksi_sedikit,$f5_produksi_sedikit,$f9_produksi_sedikit);
+            //Nilai Fuzzy Produksi Sedang
+            $fuzzy_produksi_sedang  = max($f4_produksi_sedang,$f8_produksi_sedang);
+            //Nilai Fuzzy Produksi Banyak
+            $fuzzy_produksi_banyak  = $f7_produksi_banyak;
+            
+            //Defuzzyfikasi
+            if($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+                $hasil = 0 * $fuzzy_no_produksi;
+            }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+                $hasil = 15 * $fuzzy_produksi_sedikit;
+            }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
+                $hasil = 25 * $fuzzy_produksi_sedang;
+            }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak != 0) {
+                $hasil = 35 * $fuzzy_produksi_banyak;
+            }elseif($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+                $hasil = 15 / (($fuzzy_no_produksi/$fuzzy_produksi_sedikit) + 1);
+            }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
+                $hasil = 25 / (($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang) + 1);
+            }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak != 0) {
+                $hasil = 35 / (($fuzzy_produksi_sedang/$fuzzy_produksi_banyak) + 1);
+            }else {
+                $hasil = 999;
+            }
+            
+            // if($fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
+            //     $hasil = 10 / (($fuzzy_produksi_sedang/$fuzzy_produksi_sedikit)+1);
+            // }else if($fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
+            //     $hasil = 20 / (($fuzzy_produksi_banyak/$fuzzy_produksi_sedang)+1);
+            // }else if($fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak != 0) {
+            //     $hasil = 30 / (($fuzzy_produksi_banyak))
+            // }
+    
+            // Simpan data $cekstok ke dalam array $array_cekstok
+            $array_cekstok[$produk] = $cekstok;
+
+            // Simpan data $jumlahpenjualan ke dalam array $array_jumlahPenjualan
+            $array_jumlahPenjualan[$produk] = $jumlahpenjualan;
+
+            // Simpan data $hasil ke dalam array $array_hasil
+            $array_hasil[$produk] = $hasil;
+
+            // Tambahkan nilai defuzzyfikasi ke array hasil
+            $hasil_array[$produk] = $hasil;
+        }
+    
+         // Cetak array $array_cekstok
+        // echo "<br><br><br>Data Cek Stok:<br>";
+        // foreach ($array_cekstok as $produk => $cekstok) {
+        //     echo "ID Produk: " . $produk . ", Cek Stok: " . $cekstok . "<br>";
+        // }
+
+        // Cetak array $array_jumlahPenjualan
+        // echo "<br>Data Jumlah Penjualan:<br>";
+        // foreach ($array_jumlahPenjualan as $produk => $jumlahPenjualan) {
+        //     echo "ID Produk: " . $produk . ", Jumlah Penjualan: " . $jumlahPenjualan . "<br>";
+        // }
+
+        // Cetak array $array_hasil
+        // echo "<br>Data Hasil:<br>";
+        // foreach ($array_hasil as $produk => $hasil) {
+        //     echo "ID Produk: " . $produk . ", Hasil: " . $hasil . "<br>";
+        // }
+
+
+
+                    ?>
                 <canvas id="myChart"></canvas><br>
-                    <?php
+                <?php
                         // Array untuk menyimpan jumlah terjual
                         $jumlahTerjual = array();
                         
@@ -236,6 +410,7 @@ if(isset($_POST['cari1'])) {
                             $totalTerjual = $row['total_terjual'];
                             $jumlahTerjual[$idProduk] = $totalTerjual;
                         }
+                        asort($jumlahTerjual);
                     ?>
                 <section class="section">
                     <div class="row">
@@ -243,47 +418,56 @@ if(isset($_POST['cari1'])) {
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Datatables</h5>
-                                    <a href="export-excel.php?bulan=<?php echo $bulan;?>&tahun=<?php echo $tahun ?>"
-                                        class="btn btn-info" id="cari2" name="cari2">
-                                        <i class="fa fa-download"></i> Download Excel
-                                    </a>
+                                    <!--<a href="export-excel.php?bulan=<?php echo $bulan;?>&tahun=<?php echo $tahun ?>"-->
+                                    <!--    class="btn btn-info" id="cari2" name="cari2">-->
+                                    <!--    <i class="fa fa-download"></i> Download Excel-->
+                                    <!--</a>-->
                                     <!-- Table with stripped rows -->
                                     <table class="table dtable">
                                         <thead>
                                             <tr>
                                                 <th scope>No</th>
-                                                <th scope>Tanggal Order</th>
-                                                <th scope>Nama Pelanggan</th>
-                                                <th scope>Pesanan</th>
-                                                <th scope>Jumlah Pesanan</th>
-                                                <th scope>Total</th>
+                                                <th scope>Nama Produk</th>
+                                                <th scope>Sisa Stok</th>
+                                                <th scope>Jumlah Penjualan</th>
+                                                <th scope>Prediksi Stok</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
 
-                      $no=0;
-                      while($data=mysqli_fetch_array($tampil))
-                      {
-                        $no++;
-                        $nama = $data['nama_produk'];
-                        $id_user = $data['id_user'];
-                        $query_user = mysqli_query($con,"SELECT * FROM tb_user WHERE id_user=$id_user");
-                        $data_user = mysqli_fetch_array($query_user);
+                    //   $no=0;
+                    //   while($data=mysqli_fetch_array($tampil))
+                    //   {
+                    //     $no++;
+                    //     $nama = $data['nama_produk'];
+                    //     $id_user = $data['id_user'];
+                    //     $query_user = mysqli_query($con,"SELECT * FROM tb_user WHERE id_user=$id_user");
+                    //     $data_user = mysqli_fetch_array($query_user);
+                    
+                    $nomor = 1;
+
+                    // Looping untuk mencetak setiap produk dan nilai dari ketiga array
+                    foreach ($array_cekstok as $id_produk => $cekstok) {
+                        $jumlahPenjualan = $array_jumlahPenjualan[$id_produk];
+                        $hasil = $array_hasil[$id_produk];
+                    
+                        // Mengambil nama produk dari database
+                        $query_produk = mysqli_query($con, "SELECT nama_produk FROM tb_produk WHERE id_produk = $id_produk");
+                        $row_produk = mysqli_fetch_assoc($query_produk);
+                        $nama_produk = $row_produk['nama_produk'];
+
                   ?>
                                             <tr>
-                                                <td scope><?php echo $no;?></td>
-                                                <td scope><?php echo $data['tgl']; ?></td>
-                                                <td scope><?php echo $data_user['nama_user'];?></td>
+                                                <td scope><?php echo $nomor;?></td>
+                                                <td scope><?php echo $nama_produk; ?></td>
+                                                <td scope><?php echo $cekstok;?> PCS</td>
+                                                <td scope><?php echo $jumlahPenjualan;?> PCS</td>
                                                 <td scope>
-                                                    <?php echo $nama;?>
-                                                </td>
-                                                <td scope><?php echo $data['jumlah'];?> PCS</td>
-                                                <td scope>
-                                                    Rp<?php echo number_format($data['total_pembayaran'],0,'','.');?>,-
-                                                </td>
+                                                    <?php echo intval($hasil);?> PCS</td>
                                             </tr>
                                             <?php
+                                            $nomor++;
                       }
                       ?>
                                         </tbody>
@@ -294,6 +478,7 @@ if(isset($_POST['cari1'])) {
                         </div>
                     </div>
                 </section>
+                <?php } ?>
 
 
     </main><!-- end content -->
@@ -343,9 +528,6 @@ if(isset($_POST['cari1'])) {
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            // labels: ['1', '2', '3', '4', '5', 'Juni', 'Juli', 'Agustus', 'September',
-            //     'Oktober', 'November', 'Desember'
-            // ],
             datasets: [{
                 label: 'Penjualan Bulan <?php echo json_encode($bulan); ?> Tahun <?php echo json_encode($tahun); ?>',
                 data: data,

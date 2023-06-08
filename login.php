@@ -3,6 +3,25 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
   include 'koneksi.php';
+    session_start();
+
+    // Contoh penggunaan fungsi
+    if (isset($_POST['login'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $queryLogin = "SELECT * FROM tb_user WHERE email_user='$email' AND password='$password'";
+        $resultLogin = mysqli_query($con, $queryLogin);
+
+        if(mysqli_num_rows($resultLogin) == 1) {
+            $_SESSION['email'] = $email;
+            echo '<script>alert("Login berhasil!"); window.location.href = "index.php";</script>';
+            exit;
+        }else {
+            echo '<script>alert("Login gagal! Periksa kembali email dan password Anda.");</script>';
+        }
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -75,25 +94,25 @@ error_reporting(E_ALL);
                             <div class="card-body p-5 shadow-5 text-center">
                                 <h1>Sakinah Gamis<span style="color: #ce1212;">.</span></h1>
                                 <p>Masukkan Email dan Password untuk login</p>
-                                <form>
+                                <form method="post" action="">
 
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="email" id="form3Example1" class="form-control"
-                                                    placeholder="E-Mail" />
+                                                    placeholder="E-Mail" name="email" />
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <div class="form-outline">
                                                 <input type="password" id="form3Example2" class="form-control"
-                                                    placeholder="Password" />
+                                                    placeholder="Password" name="password" />
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Submit button -->
-                                    <button type="submit" class="btn btn-block mb-6"
+                                    <button type="submit" class="btn btn-block mb-6" name="login"
                                         style="background-color: #ce1212; color: white; width: 100%;">
                                         Login
                                     </button><br>
