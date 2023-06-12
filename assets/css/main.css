@@ -95,6 +95,15 @@ section {
   color: var(--color-primary);
 }
 
+.cart-count {
+  background-color: #ec2727;
+  color: white;
+  border-radius: 50%;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+
 /*--------------------------------------------------------------
 # Breadcrumbs
 --------------------------------------------------------------*/

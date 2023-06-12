@@ -3,7 +3,20 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
   include 'koneksi.php';
+  session_start();
+  $email = $_SESSION['email'];
   $id_produk = $_GET['id'];
+
+  $queryIDUser = "SELECT * FROM tb_user WHERE email_user='$email'";
+  $resultIDUser = mysqli_query($con, $queryIDUser);
+  $dataIDUser = mysqli_fetch_assoc($resultIDUser);
+  $IDUser = $dataIDUser['id_user'];
+
+  $queryKeranjang = "SELECT SUM(qty_barang) AS keranjang FROM `tb_keranjang` WHERE id_user=$IDUser;";
+  $resultKeranjang = mysqli_query($con, $queryKeranjang);
+  $dataKeranjang = mysqli_fetch_assoc($resultKeranjang);
+  $keranjang = $dataKeranjang['keranjang'];
+
 ?>
 
 <!DOCTYPE html>
@@ -49,6 +62,9 @@ error_reporting(E_ALL);
 
 <body>
 
+    <?php
+        if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['email'])) {
+    ?>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="container d-flex align-items-center justify-content-between">
@@ -61,7 +77,66 @@ error_reporting(E_ALL);
 
             <nav id="navbar" class="navbar">
                 <ul>
-                    <li><a href="#hero">Beranda</a></li>
+                    <li><a href="index.php">Beranda</a></li>
+                    <li><a href="#menu">Produk</a></li>
+                    <li><a href="#about">Tentang Kami</a></li>
+                    <li><a href="#contact">Kontak Kami</a></li>
+                </ul>
+            </nav><!-- .navbar -->
+
+            <div class="dropdown">
+                <a class="btn btn-book-a-table dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-people-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                    </svg>&nbsp; Akun
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="#ec2727" class="bi bi-cart-check-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708z" />
+                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count"><?= $keranjang; ?></span></a>
+                    <a class="dropdown-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="#ec2727" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
+                            <path
+                                d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Zm9.886-3.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                        </svg>&nbsp; Profil Saya</a>
+                    <a class="dropdown-item" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="#ec2727" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z" />
+                            <path fill-rule="evenodd"
+                                d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z" />
+                        </svg>&nbsp; Logout</a>
+                </div>
+            </div>
+
+            <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+            <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+        </div>
+    </header>
+    <!-- End Header -->
+
+    <?php
+    }else{
+    ?>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="index.html" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <!-- <img src="assets/img/logo.png" alt=""> -->
+                <h1>Sakinah Gamis<span>.</span></h1>
+            </a>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="index.php">Beranda</a></li>
                     <li><a href="#menu">Produk</a></li>
                     <!-- <li><a href="#events">Events</a></li> -->
                     <!-- <li><a href="#chefs">Chefs</a></li> -->
@@ -88,8 +163,8 @@ error_reporting(E_ALL);
                 </ul>
             </nav><!-- .navbar -->
 
-            <a class="btn-book-a-table" href="#book-a-table"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                    height="20" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+            <a class="btn-book-a-table" href="login.php"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
                     <path
                         d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
                 </svg>&nbsp; Login/Register</a>
@@ -97,10 +172,12 @@ error_reporting(E_ALL);
             <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
 
         </div>
-    </header><!-- End Header -->
+    </header>
+    <!-- End Header -->
+    <?php } ?>
 
     <!-- ======= Hero Section ======= -->
-    <section id="hero" class="hero d-flex align-items-center section-bg">
+    <section id="" class="hero d-flex align-items-center section-bg">
         <div class="container">
             <?php
                 $queryProduk = "SELECT * FROM tb_produk WHERE id_produk=$id_produk";
@@ -108,22 +185,26 @@ error_reporting(E_ALL);
                 $dataProduk = mysqli_fetch_array($resultProduk);
             ?>
             <div class="row justify-content-between gy-5">
+
                 <div
                     class="col-lg-5 order-2 order-lg-1 d-flex flex-column justify-content-center align-items-center align-items-lg-start text-center text-lg-start">
-                    <h2 data-aos="fade-up"><?php echo $dataProduk['nama_produk']; ?></h2>
-                    <p data-aos="fade-up" data-aos-delay="100">Kami menyediakan berbagai macam jenis gamis, kebaya dan
-                        daster dengan kualitas premium.</p>
-                    <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-                        <div class="quantity">
-                            <button class="btn-book-a-table minus" type="button">-</button>
-                            <input type="text" class="quantity-input" value="1">
-                            <button class="btn-book-a-table plus" type="button">+</button>
-                        </div>
-                    </div><br>
-                    <a class="btn-book-a-table" href="produk.php?id=<?= $dataGamis['id_produk']; ?>">Masukkan
-                        Keranjang</a>
+                    <form action="keranjang.php" method="post">
+                        <h2 data-aos="fade-up"><?php echo $dataProduk['nama_produk']; ?></h2>
+                        <p data-aos="fade-up" data-aos-delay="100"><?php echo $dataProduk['deskripsi']; ?></p>
+                        <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
+                            <div class="quantity">
+                                <button class="btn-book-a-table minus" type="button">-</button>
+                                <input type="text" name="qty" class="quantity-input" value="1">
+                                <input type="hidden" name="id" class="quantity-input"
+                                    value="<?= $dataProduk['id_produk']; ?>">
+                                <button class="btn-book-a-table plus" type="button">+</button>
+                            </div>
+                        </div><br>
+                        <button type="submit" name="keranjang" class="btn-book-a-table">Masukkan
+                            Keranjang</button>
+                    </form>
                 </div>
-                <div class="col-lg-5 order-1 order-lg-2 text-center text-lg-start">
+                <div class=" col-lg-5 order-1 order-lg-2 text-center text-lg-start">
                     <img src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataProduk['gambar_produk'];?>"
                         class="img-fluid" alt="" data-aos="zoom-out" data-aos-delay="300">
                 </div>
@@ -156,7 +237,12 @@ error_reporting(E_ALL);
                                     <div class="col-lg-6">
                                         <div class="testimonial-content">
                                             <h3><?= $dataLain['nama_produk']; ?></h3>
-                                            <h4>Rp <?= number_format($dataLain['harga_produk'], 0, ',', '.');?>,-</h4>
+                                            <h4><?= $dataLain['deskripsi'];?></h4>
+                                            <h3 style="color: #ec2727;">Rp
+                                                <?= number_format($dataLain['harga_produk'], 0, ',', '.');?>,-</h3>
+                                            <a class="btn-book-a-table"
+                                                href="produk.php?id=<?= $dataLain['id_produk']; ?>">Lihat
+                                                Selengkapnya</a>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 text-center">
