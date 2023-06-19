@@ -1,4 +1,6 @@
 <?php
+echo "<br><br>";
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -201,96 +203,137 @@ error_reporting(E_ALL);
             <div class="section-header">
                 <!-- <h2>Tentang Kami</h2> -->
                 <p>Check<span>out</span></p>
-                <h2>Isi Formulir Data Diri dan Segera Lakukan Pembayaran untuk Mendapatkan Produk Impian Anda</h2>
+                <h2>Cek Kembali Pesanan Anda dan Segera Lakukan Pembayaran untuk Mendapatkan Produk Impian Anda</h2>
             </div>
 
             <div class="row gy-4">
-                <!-- <div class="col-lg-7 position-relative about-img"
-                    style="background-image: url(assets/img/965e232020549efdb1a21f4a30e7b6b5.jpeg) ;" data-aos="fade-up"
-                    data-aos-delay="150">
-                </div> -->
                 <div class="col-lg-7">
-                    <form method="post" action="">
-                        <div class="form-outline mb-4">
-                            <div class="form-outline">
-                                <input type="text" id="form3Example1" class="form-control" placeholder="Nama Penerima"
-                                    name="nama" />
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" id="form3Example1" class="form-control" placeholder="Provinsi"
-                                        name="provinsi" />
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" id="form3Example2" class="form-control"
-                                        placeholder="Kabupaten/Kota" name="kabupaten" />
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" id="form3Example2" class="form-control" placeholder="Kecamatan"
-                                        name="kecamatan" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-3 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" id="form3Example1" class="form-control"
-                                        placeholder="Kelurahan/Desa" name="desa" />
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="form-outline">
-                                    <input type="number" id="form3Example2" class="form-control" placeholder="RT"
-                                        name="rt" />
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="form-outline">
-                                    <input type="number" id="form3Example2" class="form-control" placeholder="RW"
-                                        name="rw" />
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <div class="form-outline">
-                                    <input type="number" id="form3Example2" class="form-control" placeholder="Kode Pos"
-                                        name="pos" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-outline mb-4">
-                            <div class="form-outline">
-                                <textarea class="form-control" placeholder="Alamat Lengkap" id="floatingTextarea"
-                                    name="alamat" style="height: 100px;"></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" name="checkout" class="btn btn-outline-danger btn-block"
-                            style="width: 100%;">Cek Ongkir</button>
-                    </form>
-                </div>
-                <?php
+                    <h5>Data Diri Penerima</h5>
+                    <div class="section-header">
+                        <?php
+                            $queryData = "SELECT * FROM tb_user WHERE email_user='$email'";
+                            $resultData = mysqli_query($con, $queryData);
+                            while($dataDiri = mysqli_fetch_array($resultData)){
+                        ?>
+                        <span style="text-align: left; text-transform: initial;">
+                            <h2 style="text-transform: initial;"><?= $dataDiri['nama_user']; ?></h2>
+                            <h2 style="text-transform: initial;"><?= $dataDiri['email_user']; ?></h2>
+                            <h2 style="text-transform: initial;"><?= $dataDiri['telp_user']; ?></h2>
+                            <h2 style="text-transform: initial;"><?= $dataDiri['alamat_user']; ?></h2>
+                            <?php } ?>
+                        </span>
+                    </div>
+                    <?php
                     $queryQTY = "SELECT SUM(qty_barang) AS total_qty FROM tb_keranjang WHERE id_user=$IDUser";
                     $resultQTY = mysqli_query($con, $queryQTY);
                     $dataQTY = mysqli_fetch_array($resultQTY);
                     $totalQTY = $dataQTY['total_qty'];
 
-                    if($totalQTY <= 3){
-                        $ongkir = $totalQTY*20000;
+                    if($totalQTY >= 0 && $totalQTY <= 3){
+                        $ongkir = 20000;
                     }elseif($totalQTY >= 4 && $totalQTY <= 6){
-                        $ongkir = $totalQTY*20000;
+                        $ongkir = 40000;
                     }elseif($totalQTY >= 7 && $totalQTY <= 9){
-                        $ongkir = $totalQTY*20000;
+                        $ongkir = 60000;
                     }elseif($totalQTY >= 10 && $totalQTY <= 12){
-                        $ongkir = $totalQTY*20000;
+                        $ongkir = 80000;
+                    }elseif($totalQTY >=13 && $totalQTY <=15){
+                        $ongkir = 100000;
+                    }else {
+                        $ongkir = 120000;
                     }
+                    
                 ?>
+                    <form method="post" action="" enctype="multipart/form-data">
+                        <table class="table table-borderless">
+                            <thead style="background-color: #000; color: #fff;">
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <h6>Nama Produk</h6>
+                                        </center>
+                                    </td>
+                                    <td>
+                                        <center>
+                                            <h6>Jumlah Produk</h6>
+                                        </center>
+                                    </td>
+                                    <td>
+                                        <center>
+                                            <h6>Subtotal</h6>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                        $queryFix = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
+                        $resultFix = mysqli_query($con, $queryFix);
+                        
+                        $totalSemua = 0;
+                        while($dataFix = mysqli_fetch_array($resultFix)){
+                    ?>
+                                <tr>
+                                    <td>
+                                        <img src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataFix['gambar_produk'];?>"
+                                            class="img-fluid" alt="" data-aos="zoom-out" data-aos-delay="300"
+                                            style="width: 100px; height: 150px;">&nbsp;
+                                        <?php echo $dataFix['nama_produk']; ?>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <h6><?php echo $dataFix['qty_barang']; ?> PCS</h6>
+                                    </td>
+                                    <td style="text-align: center; vertical-align: middle;">
+                                        <?php
+                                $qtyBarang = $dataFix['qty_barang'];
+                                $hargaBarang = $dataFix['harga_produk'];
+                                $totalHarga = $qtyBarang*$hargaBarang;
+                                $totalSemua += $totalHarga;
+                                $hargaFix = $totalSemua+$ongkir;
+                            ?>
+                                        <h6>Rp
+                                            <?= number_format($dataFix['harga_produk'], 0, ',', '.');?>,-</h6>
+                                    </td>
+                                </tr>
+                                <?php 
+                        }
+                    ?>
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 style="text-align: right;">Biaya Ongkir</h6>
+                                    </td>
+                                    <td>
+                                        <center>
+                                            <h6>Rp
+                                                <?= number_format($ongkir,0,',','.'); ?>,-</h6>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr style="background-color: #000">
+                                    <td colspan="2">
+                                        <h5 style="text-align: right; color: white;">TOTAL</h5>
+                                    </td>
+                                    <td>
+                                        <center>
+                                            <h5 style="color: #ec2727;">Rp
+                                                <?= number_format($hargaFix,0,',','.'); ?>,-
+                                            </h5>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-outline mb-4">
+                            <div class="form-outline">
+                                <label for="formFile" class="form-label">Upload Bukti Transfer <i>(Format .jpg, .jpeg,
+                                        .png)</i></label>
+                                <input class="form-control" type="file" id="formFile" name="bukti">
+                            </div>
+                        </div>
+                        <button type="submit" name="bayar" class="btn btn-outline-danger btn-block"
+                            style="width: 100%;">Kirim</button>
+                    </form>
+                </div>
                 <div class="col-lg-5" data-aos="fade-up" data-aos-delay="300">
                     <div class="content ps-0 ps-lg-5">
                         <h6 style="color: #ce1212;">Silahkan transfer sesuai dengan nominal yang tertera pada
@@ -326,76 +369,78 @@ error_reporting(E_ALL);
             </div>
 
         </div>
-    </section>
+    </section><?php
+    }elseif(isset($_POST['bayar'])){
 
-    <!-- ======= Hero Section ======= -->
-    <section id="" class="hero d-flex align-items-center section-bg">
-        <div class="container">
-            <div class="row justify-content-between gy-5">
-                <form action="" method="post">
-                    <table class="table table-borderless">
-                        <thead style="background-color: #000; color: #fff;">
-                            <tr>
-                                <td>
-                                    <center>
-                                        <h5>Nama Produk</h5>
-                                    </center>
-                                </td>
-                                <td>
-                                    <center>
-                                        <h5>Jumlah Produk</h5>
-                                    </center>
-                                </td>
-                                <td>
-                                    <center>
-                                        <h5>Subtotal</h5>
-                                    </center>
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                        $queryProduk = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
+
+        $tglSekarang = date("Y-m-d H:i:s");
+
+        $ekstensi = array('png','jpg','jpeg');
+        $filename = $_FILES['bukti']['name'];
+        $size     = $_FILES['bukti']['size'];
+        $temp     = $_FILES['bukti']['tmp_name'];
+        $path     = '/admin.sakinahgamis.com/admin/gambar/bukti/';
+        $target   = $path.basename($_FILES['bukti']['name']);
+        $ext      = pathinfo($filename, PATHINFO_EXTENSION);
+
+        $root = getcwd();
+        move_uploaded_file($temp,$root.$target);
+        
+        $queryProduk = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
                         $resultProduk = mysqli_query($con, $queryProduk);
                         
                         $totalSemua = 0;
-                        while($dataProduk = mysqli_fetch_array($resultProduk)){
-                    ?>
-                            <tr>
-                                <td>
-                                    <img src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataProduk['gambar_produk'];?>"
-                                        class="img-fluid" alt="" data-aos="zoom-out" data-aos-delay="300"
-                                        style="width: 150px; height: 250px;">&nbsp;
-                                    <?php echo $dataProduk['nama_produk']; ?>
-                                </td>
-                                <td>
-                                    <center>
-                                        <?php echo $dataProduk['qty_barang']; ?> PCS
-                                    </center>
-                                </td>
-                                <td>
-                                    <center>
-                                        <?php
-                                $qtyBarang = $dataProduk['qty_barang'];
-                                $hargaBarang = $dataProduk['harga_produk'];
-                                $totalHarga = $qtyBarang*$hargaBarang;
-                                $totalSemua += $totalHarga;
-                            ?>
-                                        <h5>Rp
-                                            <?= number_format($dataProduk['harga_produk'], 0, ',', '.');?>,-</h5>
-                                    </center>
-                                </td>
-                            </tr>
-                            <?php 
+                        while($dataPenj = mysqli_fetch_array($resultProduk)){
+                            
+                            $queryQTY = "SELECT SUM(qty_barang) AS total_qty FROM tb_keranjang WHERE id_user=$IDUser";
+                    $resultQTY = mysqli_query($con, $queryQTY);
+                    $dataQTY = mysqli_fetch_array($resultQTY);
+                    $totalQTY = $dataQTY['total_qty'];
+
+                    if($totalQTY >= 0 && $totalQTY <= 3){
+                        $ongkir = 20000;
+                    }elseif($totalQTY >= 4 && $totalQTY <= 6){
+                        $ongkir = 40000;
+                    }elseif($totalQTY >= 7 && $totalQTY <= 9){
+                        $ongkir = 60000;
+                    }elseif($totalQTY >= 10 && $totalQTY <= 12){
+                        $ongkir = 80000;
+                    }elseif($totalQTY >=13 && $totalQTY <=15){
+                        $ongkir = 100000;
+                    }else {
+                        $ongkir = 120000;
+                    }
+
+                            $idUser = $dataPenj['id_user'];
+                            $idProduk = $dataPenj['id_produk'];
+                            $QYTBarang = $dataPenj['qty_barang'];
+                            $HARGABRG = $dataPenj['harga_produk'];
+                            $totalHarga = $QYTBarang*$HARGABRG;
+                            $totalSemua += $totalHarga;
+                            $hargaFix = $totalSemua+$ongkir;
+
+                            // if(in_array($ext, $ekstensi) === true) {
+                            //     if($size < 1044070) {
+                                    // $root = getcwd();
+                                    // if(move_uploaded_file($temp,$root.$target)) {
+                                        $query = mysqli_query($con,"INSERT INTO tb_penjualan(tgl,id_admin,id_user,id_produk,jumlah,total_pembayaran,bukti_pembayaran,status_pembayaran,status_pesanan) VALUES ('$tglSekarang','1','$idUser','$idProduk','$QYTBarang','$hargaFix','$filename','Dibayar','Diproses')");
+                                        if($query) {
+                                            echo "<script>alert('SUKSES'); </script>";
+                                        }else {
+                                            echo "<script>alert('GAGAL QUERY');</script>";
+                                        }
+                                    // }else {
+                                    //     echo "<script>alert('GAGAL UPLOAD');</script>";
+                                    // }
+                                // }else {
+                                //     echo "<script>alert('GAGAL UKURAN'); window.location = 'index.php'</script>";
+                                // }
+                            // }else {
+                            //     echo "<script>alert('GAGAL EKSTENSI'); window.location = 'index.php'</script>";
+                            // }
                         }
-                    ?>
-                        </tbody>
-                    </table>
-                </form>
-            </div>
-        </div>
-    </section>
-    <!-- End Hero Section -->
+    ?>
+
     <?php
   }elseif(!isset($_POST['checkout'])){ 
     ?>
@@ -492,9 +537,9 @@ error_reporting(E_ALL);
             </div>
         </div>
     </section>
-    <?php
-    }
-    ?>
+    <?php } ?>
+
+
 
     <main id="main">
 
