@@ -204,10 +204,25 @@ if (empty($_SESSION['username'])){
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="col-sm-8 col-sm-8 control-label">Harga</label>
+                                        <label class="col-sm-8 col-sm-8 control-label">Harga Beli</label>
+                                        <div class="col-sm-12">
+                                            <input name="hargaBeli" type="number" id="harga" class="form-control mb-3"
+                                                placeholder="Cth : 120000" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-8 col-sm-8 control-label">Harga Jual</label>
                                         <div class="col-sm-12">
                                             <input name="harga" type="number" id="harga" class="form-control mb-3"
                                                 placeholder="Cth : 120000" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-8 col-sm-8 control-label">Harga Jual</label>
+                                        <div class="col-sm-12">
+                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                                name="deskripsi" placeholder="Tuliskan Deskripsi Produk"
+                                                required></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -241,7 +256,9 @@ if (empty($_SESSION['username'])){
                                                 <th scope>No</th>
                                                 <th scope>Nama Produk</th>
                                                 <th scope>Kategori</th>
-                                                <th scope>Harga</th>
+                                                <th scope>Harga Beli</th>
+                                                <th scope>Harga Jual</th>
+                                                <th scope>Laba Bersih</th>
                                                 <th scope>Total Stok</th>
                                                 <th scope>Gambar</th>
                                                 <th scope>Aksi</th>
@@ -256,7 +273,15 @@ if (empty($_SESSION['username'])){
                                                 <td scope><?php echo $no;?></td>
                                                 <td scope><?php echo $data['nama_produk']; ?></td>
                                                 <td scope><?php echo $data['kategori_produk'];?></td>
-                                                <td scope>Rp<?php echo $data['harga_produk'];?>,-</td>
+                                                <td scope>Rp<?php echo number_format($data['harga_beli'],0,',','.');?>,-
+                                                </td>
+                                                <td scope>
+                                                    Rp<?php echo number_format($data['harga_produk'],0,',','.');?>,-
+                                                </td>
+                                                <?php
+                                                    $laba = $data['harga_produk'] - $data['harga_beli'];
+                                                ?>
+                                                <td scope>Rp<?php echo number_format($laba,0,',','.');?>,-</td>
                                                 <td scope>
                                                     <?php
                                                     $id = $data['id_produk']; 

@@ -239,54 +239,54 @@ $tahun = isset($_POST['tahun']);
             $jumlahpenjualan = $j['jumlah_penjualan'];
     
             // Fuzzifikasi Stok
-            if($cekstok >= 0 && $cekstok <=10) {
+            if($cekstok >= 0 && $cekstok <=2) {
               $f_stok_minim   = 1;
               $f_stok_sedang  = 0;
               $f_stok_banyak  = 0;
-            }else if($cekstok > 10 && $cekstok <=20) {
+            }else if($cekstok > 2 && $cekstok <=4) {
               $f_stok_minim   = 1;
               $f_stok_sedang  = 0;
               $f_stok_banyak  = 0;
-            }else if($cekstok > 20 && $cekstok <= 30) {
-              $f_stok_minim   = (30-$cekstok)/(30-20);
-              $f_stok_sedang  = ($cekstok-20)/(30-20);
+            }else if($cekstok > 4 && $cekstok <= 6) {
+              $f_stok_minim   = (6-$cekstok)/(6-4);
+              $f_stok_sedang  = ($cekstok-4)/(6-4);
               $f_stok_banyak  = 0;
-            }else if($cekstok > 30 && $cekstok <= 40) {
+            }else if($cekstok > 6 && $cekstok <= 8) {
               $f_stok_minim   = 0;
               $f_stok_sedang  = 1;
               $f_stok_banyak  = 0;
-            }else if($cekstok > 40 && $cekstok <= 50) {
+            }else if($cekstok > 8 && $cekstok <= 10) {
               $f_stok_minim   = 0;
-              $f_stok_sedang  = (50-$cekstok)/(50-40);
-              $f_stok_banyak  = ($cekstok-40)/(50-40);
-            }else if($cekstok > 50) {
+              $f_stok_sedang  = (10-$cekstok)/(10-8);
+              $f_stok_banyak  = ($cekstok-8)/(10-8);
+            }else if($cekstok > 10) {
               $f_stok_minim   = 0;
               $f_stok_sedang  = 0;
               $f_stok_banyak  = 1;
             }
             
             //Fuzzifikasi Varibel Penjualan
-            if($jumlahpenjualan >= 0 && $jumlahpenjualan <=10) {
+            if($jumlahpenjualan >= 0 && $jumlahpenjualan <=2) {
                 $f_penjualan_sedikit    = 1;
                 $f_penjualan_sedang     = 0;
                 $f_penjualan_banyak     = 0;
-            }else if($jumlahpenjualan > 10 && $jumlahpenjualan <=20) {
+            }else if($jumlahpenjualan > 2 && $jumlahpenjualan <=4) {
                 $f_penjualan_sedikit    = 1;
                 $f_penjualan_sedang     = 0;
                 $f_penjualan_banyak     = 0;
-            }else if($jumlahpenjualan > 20 && $jumlahpenjualan <=30) {
-                $f_penjualan_sedikit    = (30-$jumlahpenjualan)/(30-20);
-                $f_penjualan_sedang     = ($jumlahpenjualan-20)/(30-20);
+            }else if($jumlahpenjualan > 4 && $jumlahpenjualan <=6) {
+                $f_penjualan_sedikit    = (6-$jumlahpenjualan)/(6-4);
+                $f_penjualan_sedang     = ($jumlahpenjualan-4)/(6-4);
                 $f_penjualan_banyak     = 0;
-            }else if($jumlahpenjualan > 30 && $jumlahpenjualan <=40) {
+            }else if($jumlahpenjualan > 6 && $jumlahpenjualan <=8) {
                 $f_penjualan_sedikit    = 0;
                 $f_penjualan_sedang     = 1;
                 $f_penjualan_banyak     = 0;
-            }else if($jumlahpenjualan > 40 && $jumlahpenjualan <=50) {
+            }else if($jumlahpenjualan > 8 && $jumlahpenjualan <=10) {
                 $f_penjualan_sedikit    = 0;
-                $f_penjualan_sedang     = (50-$jumlahpenjualan)/(50-40);
-                $f_penjualan_banyak     = ($jumlahpenjualan-40)/(50-40);
-            }else if($jumlahpenjualan > 50) {
+                $f_penjualan_sedang     = (10-$jumlahpenjualan)/(10-8);
+                $f_penjualan_banyak     = ($jumlahpenjualan-8)/(10-8);
+            }else if($jumlahpenjualan > 10) {
                 $f_penjualan_sedikit    = 0;
                 $f_penjualan_sedang     = 0;
                 $f_penjualan_banyak     = 1;
@@ -325,17 +325,17 @@ $tahun = isset($_POST['tahun']);
             if($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
                 $hasil = 0 * $fuzzy_no_produksi;
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
-                $hasil = 15 * $fuzzy_produksi_sedikit;
+                $hasil = 2 * $fuzzy_produksi_sedikit;
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
-                $hasil = 25 * $fuzzy_produksi_sedang;
+                $hasil = 4 * $fuzzy_produksi_sedang;
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak != 0) {
-                $hasil = 35 * $fuzzy_produksi_banyak;
+                $hasil = 6 * $fuzzy_produksi_banyak;
             }elseif($fuzzy_no_produksi !=0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {
-                $hasil = 15 / (($fuzzy_no_produksi/$fuzzy_produksi_sedikit) + 1);
+                $hasil = 2 / (($fuzzy_no_produksi/$fuzzy_produksi_sedikit) + 1);
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak == 0) {
-                $hasil = 25 / (($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang) + 1);
+                $hasil = 4 / (($fuzzy_produksi_sedikit/$fuzzy_produksi_sedang) + 1);
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak != 0) {
-                $hasil = 35 / (($fuzzy_produksi_sedang/$fuzzy_produksi_banyak) + 1);
+                $hasil = 6 / (($fuzzy_produksi_sedang/$fuzzy_produksi_banyak) + 1);
             }else {
                 $hasil = 999;
             }
@@ -411,7 +411,97 @@ $tahun = isset($_POST['tahun']);
                             $jumlahTerjual[$idProduk] = $totalTerjual;
                         }
                         asort($jumlahTerjual);
+                        
+                        $queryModal = "SELECT SUM(tb_penjualan.jumlah * tb_produk.harga_beli) AS total_modal
+                            FROM tb_penjualan
+                            JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk
+                            WHERE DATE_FORMAT(tb_penjualan.tgl, '%Y-%m') = '$tahun-$bulan'";
+                        
+                        $resultModal = mysqli_query($con, $queryModal);
+                        $dataModal = mysqli_fetch_array($resultModal);
+                        $modal = $dataModal['total_modal'];
+                        
+                        $queryPendapatan = "SELECT SUM(total_pembayaran) AS total_pendapatan
+                            FROM tb_penjualan
+                            WHERE DATE_FORMAT(tgl, '%Y-%m') = '$tahun-$bulan'";
+                        
+                        $resultPendapatan = mysqli_query($con, $queryPendapatan);
+                        $dataPendapatan = mysqli_fetch_array($resultPendapatan);
+                        $pendapatan = $dataPendapatan['total_pendapatan'];
+                        
+                        $untung = $pendapatan - $modal;
+
                     ?>
+                <section class="section dashboard">
+                    <div class="row">
+
+                        <!-- Left side columns -->
+                        <div class="col-lg-12">
+                            <div class="row">
+
+                                <!-- Sales Card -->
+                                <div class="col-xxl-6 col-md-6">
+                                    <div class="card info-card sales-card">
+
+                                        <div class="card-body">
+                                            <h5 class="card-title">Total Penjualan</h5>
+
+                                            <div class="d-flex align-items-center">
+                                                <div
+                                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-bag-fill"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>Rp<?php echo number_format($pendapatan,0,',','.');?>,-</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- End Sales Card -->
+
+                                <!-- Revenue Card -->
+                                <div class="col-xxl-6 col-md-6">
+                                    <div class="card info-card customers-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Total Modal</h5>
+
+                                            <div class="d-flex align-items-center">
+                                                <div
+                                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-currency-dollar"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>Rp<?php echo number_format($modal,0,',','.');?>,-</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- End Revenue Card -->
+                                <div class="col-xxl-6 col-md-12">
+                                    <div class="card info-card revenue-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Total Keuntungan</h5>
+
+                                            <div class="d-flex align-items-center">
+                                                <div
+                                                    class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-cash-coin"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>Rp<?php echo number_format($untung,0,',','.');?>,-</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- End Revenue Card -->
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <section class="section">
                     <div class="row">
                         <div class="col-lg-12">
@@ -482,20 +572,6 @@ $tahun = isset($_POST['tahun']);
 
 
     </main><!-- end content -->
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-    </footer><!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>
