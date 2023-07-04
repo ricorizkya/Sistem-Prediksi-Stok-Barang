@@ -99,7 +99,14 @@ error_reporting(E_ALL);
                             width="16" height="16" fill="#ec2727" class="bi bi-cart-check-fill" viewBox="0 0 16 16">
                             <path
                                 d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count"><?= $keranjang; ?></span></a>
+                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count">
+                            <?php
+                                if($keranjang == 0) {
+                                    echo "0";
+                                }else {
+                                    echo $keranjang;
+                                }
+                            ?></span></a>
                     <a class="dropdown-item" href="profil.php"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                             height="16" fill="#ec2727" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
                             <path
@@ -267,12 +274,12 @@ error_reporting(E_ALL);
                             </thead>
                             <tbody>
                                 <?php
-                        $queryFix = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
-                        $resultFix = mysqli_query($con, $queryFix);
-                        
-                        $totalSemua = 0;
-                        while($dataFix = mysqli_fetch_array($resultFix)){
-                    ?>
+                                    $queryFix = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
+                                    $resultFix = mysqli_query($con, $queryFix);
+                                    
+                                    $totalSemua = 0;
+                                    while($dataFix = mysqli_fetch_array($resultFix)){
+                                ?>
                                 <tr>
                                     <td>
                                         <img src="admin.sakinahgamis.com/admin/gambar/produk/<?= $dataFix['gambar_produk'];?>"
@@ -285,19 +292,19 @@ error_reporting(E_ALL);
                                     </td>
                                     <td style="text-align: center; vertical-align: middle;">
                                         <?php
-                                $qtyBarang = $dataFix['qty_barang'];
-                                $hargaBarang = $dataFix['harga_produk'];
-                                $totalHarga = $qtyBarang*$hargaBarang;
-                                $totalSemua += $totalHarga;
-                                $hargaFix = $totalSemua+$ongkir;
-                            ?>
+                                            $qtyBarang = $dataFix['qty_barang'];
+                                            $hargaBarang = $dataFix['harga_produk'];
+                                            $totalHarga = $qtyBarang*$hargaBarang;
+                                            $totalSemua += $totalHarga;
+                                            $hargaFix = $totalSemua+$ongkir;
+                                        ?>
                                         <h6>Rp
                                             <?= number_format($dataFix['harga_produk'], 0, ',', '.');?>,-</h6>
                                     </td>
                                 </tr>
                                 <?php 
-                        }
-                    ?>
+                                    }
+                                ?>
                                 <tr>
                                     <td colspan="2">
                                         <h6 style="text-align: right;">Biaya Ongkir</h6>
@@ -386,58 +393,66 @@ error_reporting(E_ALL);
         $root = getcwd();
         move_uploaded_file($temp,$root.$target);
         
-        $queryProduk = "SELECT * FROM tb_keranjang LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk";
+        $queryProduk = "SELECT tb_keranjang.id_keranjang, tb_keranjang.id_user, tb_produk.id_produk, tb_keranjang.qty_barang, tb_produk.harga_produk, tb_stok.stok_produk
+        FROM tb_keranjang
+        LEFT JOIN tb_user ON tb_keranjang.id_user = tb_user.id_user
+        LEFT JOIN tb_produk ON tb_keranjang.id_barang = tb_produk.id_produk
+        LEFT JOIN tb_stok ON tb_produk.id_produk = tb_stok.id_produk
+        WHERE tb_stok.id_stok IN (SELECT MAX(id_stok) FROM tb_stok GROUP BY id_produk)";
                         $resultProduk = mysqli_query($con, $queryProduk);
                         
                         $totalSemua = 0;
                         while($dataPenj = mysqli_fetch_array($resultProduk)){
                             
                             $queryQTY = "SELECT SUM(qty_barang) AS total_qty FROM tb_keranjang WHERE id_user=$IDUser";
-                    $resultQTY = mysqli_query($con, $queryQTY);
-                    $dataQTY = mysqli_fetch_array($resultQTY);
-                    $totalQTY = $dataQTY['total_qty'];
+                            $resultQTY = mysqli_query($con, $queryQTY);
+                            $dataQTY = mysqli_fetch_array($resultQTY);
+                            $totalQTY = $dataQTY['total_qty'];
 
-                    if($totalQTY >= 0 && $totalQTY <= 3){
-                        $ongkir = 20000;
-                    }elseif($totalQTY >= 4 && $totalQTY <= 6){
-                        $ongkir = 40000;
-                    }elseif($totalQTY >= 7 && $totalQTY <= 9){
-                        $ongkir = 60000;
-                    }elseif($totalQTY >= 10 && $totalQTY <= 12){
-                        $ongkir = 80000;
-                    }elseif($totalQTY >=13 && $totalQTY <=15){
-                        $ongkir = 100000;
-                    }else {
-                        $ongkir = 120000;
-                    }
+                            if($totalQTY >= 0 && $totalQTY <= 3){
+                                $ongkir = 20000;
+                            }elseif($totalQTY >= 4 && $totalQTY <= 6){
+                                $ongkir = 40000;
+                            }elseif($totalQTY >= 7 && $totalQTY <= 9){
+                                $ongkir = 60000;
+                            }elseif($totalQTY >= 10 && $totalQTY <= 12){
+                                $ongkir = 80000;
+                            }elseif($totalQTY >=13 && $totalQTY <=15){
+                                $ongkir = 100000;
+                            }else {
+                                $ongkir = 120000;
+                            }
 
                             $idUser = $dataPenj['id_user'];
                             $idProduk = $dataPenj['id_produk'];
                             $QYTBarang = $dataPenj['qty_barang'];
                             $HARGABRG = $dataPenj['harga_produk'];
+                            $stokBarang = $dataPenj['stok_produk'];
                             $totalHarga = $QYTBarang*$HARGABRG;
                             $totalSemua += $totalHarga;
                             $hargaFix = $totalSemua+$ongkir;
 
-                            // if(in_array($ext, $ekstensi) === true) {
-                            //     if($size < 1044070) {
-                                    // $root = getcwd();
-                                    // if(move_uploaded_file($temp,$root.$target)) {
-                                        $query = mysqli_query($con,"INSERT INTO tb_penjualan(tgl,id_admin,id_user,id_produk,jumlah,total_pembayaran,bukti_pembayaran,status_pembayaran,status_pesanan) VALUES ('$tglSekarang','1','$idUser','$idProduk','$QYTBarang','$hargaFix','$filename','Dibayar','Diproses')");
-                                        if($query) {
-                                            echo "<script>alert('SUKSES'); </script>";
+                                        $queryPenjualan = mysqli_query($con,"INSERT INTO tb_penjualan(tgl,id_admin,id_user,id_produk,jumlah,total_pembayaran,bukti_pembayaran,status_pembayaran,status_pesanan,resi_pengiriman) VALUES ('$tglSekarang','1','$idUser','$idProduk','$QYTBarang','$hargaFix','$filename','Dibayar','Diproses','-')");
+
+                                        if($queryPenjualan) {
+                                            $stokBaru = $stokBarang - $QYTBarang;
+                                            $queryUpdateStok = mysqli_query($con, "UPDATE tb_stok SET stok_produk = $stokBaru WHERE id_produk = $idProduk ORDER BY id_stok DESC LIMIT 1");
+
+                                            if($queryUpdateStok){
+                                                $queryHapusKeranjang = mysqli_query($con, "DELETE FROM tb_keranjang WHERE id_user = $idUser AND id_barang = $idProduk");
+
+                                                if($queryHapusKeranjang) {
+                                                    echo "<script>alert('Stok berhasil di update dan data dihapus dari keranjang'); </script>";
+                                                }else {
+                                                    echo "<script>alert('Stok gagal di update dan data gagal dihapus dari keranjang'); </script>";
+                                                }
+                                            }else{
+                                                echo "<script>alert('Gagal update stok barang'); </script>";
+                                            }
+                                            echo "<script>alert('PEMBAYARAN SUKSES'); window.location.href = 'index.php';</script>";
                                         }else {
-                                            echo "<script>alert('GAGAL QUERY');</script>";
+                                            echo "<script>alert('PEMBAYARAN GAGAL'); window.location.href = 'detailkeranjang.php';</script>";
                                         }
-                                    // }else {
-                                    //     echo "<script>alert('GAGAL UPLOAD');</script>";
-                                    // }
-                                // }else {
-                                //     echo "<script>alert('GAGAL UKURAN'); window.location = 'index.php'</script>";
-                                // }
-                            // }else {
-                            //     echo "<script>alert('GAGAL EKSTENSI'); window.location = 'index.php'</script>";
-                            // }
                         }
     ?>
 

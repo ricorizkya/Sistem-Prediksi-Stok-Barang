@@ -4,17 +4,7 @@ error_reporting(E_ALL);
 
   include 'koneksi.php';
   session_start();
-  $email = $_SESSION['email'];
-
-  $queryIDUser = "SELECT * FROM tb_user WHERE email_user='$email'";
-  $resultIDUser = mysqli_query($con, $queryIDUser);
-  $dataIDUser = mysqli_fetch_assoc($resultIDUser);
-  $IDUser = $dataIDUser['id_user'];
-
-  $queryKeranjang = "SELECT SUM(qty_barang) AS keranjang FROM `tb_keranjang` WHERE id_user=$IDUser;";
-  $resultKeranjang = mysqli_query($con, $queryKeranjang);
-  $dataKeranjang = mysqli_fetch_assoc($resultKeranjang);
-  $keranjang = $dataKeranjang['keranjang'];
+  
 
 
 ?>
@@ -64,6 +54,17 @@ error_reporting(E_ALL);
 
     <?php
         if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['email'])) {
+  $email = $_SESSION['email'];
+
+  $queryIDUser = "SELECT * FROM tb_user WHERE email_user='$email'";
+  $resultIDUser = mysqli_query($con, $queryIDUser);
+  $dataIDUser = mysqli_fetch_assoc($resultIDUser);
+  $IDUser = $dataIDUser['id_user'];
+
+  $queryKeranjang = "SELECT SUM(qty_barang) AS keranjang FROM `tb_keranjang` WHERE id_user=$IDUser;";
+  $resultKeranjang = mysqli_query($con, $queryKeranjang);
+  $dataKeranjang = mysqli_fetch_assoc($resultKeranjang);
+  $keranjang = $dataKeranjang['keranjang'];
     ?>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -98,7 +99,15 @@ error_reporting(E_ALL);
                             width="16" height="16" fill="#ec2727" class="bi bi-cart-check-fill" viewBox="0 0 16 16">
                             <path
                                 d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count"><?= $keranjang; ?></span></a>
+                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count">
+                            <?php
+                                if($keranjang == 0) {
+                                    echo "0";
+                                }else {
+                                    echo $keranjang;
+                                }
+                            ?>
+                        </span></a>
                     <a class="dropdown-item" href="profil.php"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                             height="16" fill="#ec2727" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
                             <path

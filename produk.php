@@ -4,18 +4,7 @@ error_reporting(E_ALL);
 
   include 'koneksi.php';
   session_start();
-  $email = $_SESSION['email'];
   $id_produk = $_GET['id'];
-
-  $queryIDUser = "SELECT * FROM tb_user WHERE email_user='$email'";
-  $resultIDUser = mysqli_query($con, $queryIDUser);
-  $dataIDUser = mysqli_fetch_assoc($resultIDUser);
-  $IDUser = $dataIDUser['id_user'];
-
-  $queryKeranjang = "SELECT SUM(qty_barang) AS keranjang FROM `tb_keranjang` WHERE id_user=$IDUser;";
-  $resultKeranjang = mysqli_query($con, $queryKeranjang);
-  $dataKeranjang = mysqli_fetch_assoc($resultKeranjang);
-  $keranjang = $dataKeranjang['keranjang'];
 
 ?>
 
@@ -64,6 +53,17 @@ error_reporting(E_ALL);
 
     <?php
         if(session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['email'])) {
+  $email = $_SESSION['email'];
+
+  $queryIDUser = "SELECT * FROM tb_user WHERE email_user='$email'";
+  $resultIDUser = mysqli_query($con, $queryIDUser);
+  $dataIDUser = mysqli_fetch_assoc($resultIDUser);
+  $IDUser = $dataIDUser['id_user'];
+
+  $queryKeranjang = "SELECT SUM(qty_barang) AS keranjang FROM `tb_keranjang` WHERE id_user=$IDUser;";
+  $resultKeranjang = mysqli_query($con, $queryKeranjang);
+  $dataKeranjang = mysqli_fetch_assoc($resultKeranjang);
+  $keranjang = $dataKeranjang['keranjang'];
     ?>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -98,7 +98,14 @@ error_reporting(E_ALL);
                             width="16" height="16" fill="#ec2727" class="bi bi-cart-check-fill" viewBox="0 0 16 16">
                             <path
                                 d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708z" />
-                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count"><?= $keranjang; ?></span></a>
+                        </svg>&nbsp; Keranjang &nbsp;<span class="cart-count">
+                            <?php
+                                if($keranjang == 0) {
+                                    echo "0";
+                                }else {
+                                    echo $keranjang;
+                                }
+                            ?></span></a>
                     <a class="dropdown-item" href="profil.php"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                             height="16" fill="#ec2727" class="bi bi-person-fill-gear" viewBox="0 0 16 16">
                             <path
@@ -195,15 +202,16 @@ error_reporting(E_ALL);
                             <?= number_format($dataProduk['harga_produk'], 0, ',', '.');?>,-</h3>
                         <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
                             <div class="quantity">
-                                <button class="btn-book-a-table minus" type="button">-</button>
-                                <input type="text" name="qty" class="quantity-input" value="1">
-                                <input type="hidden" name="id" class="quantity-input"
+                                <button class="btn-book-a-table-minus" type="button">-</button>
+                                <input type="text" name="qty" value="1" style="text-align: center;">
+                                <input type="hidden" name="id" class="quantity-input-id"
                                     value="<?= $dataProduk['id_produk']; ?>">
-                                <button class="btn-book-a-table plus" type="button">+</button>
+                                <button class="btn-book-a-table-plus" type="button">+</button>
                             </div>
                         </div><br>
+                        <p class="warning"></p>
                         <button data-aos="fade-up" data-aos-delay="100" type="submit" name="keranjang"
-                            class="btn-book-a-table">Masukkan
+                            class="btn-book-a-table-cart">Masukkan
                             Keranjang</button>
                     </form>
                 </div>
@@ -325,6 +333,15 @@ error_reporting(E_ALL);
 
     <div id="preloader"></div>
 
+    <?php
+        $queryStok = "SELECT * FROM tb_stok WHERE id_produk=$id_produk AND status=0 ORDER BY id_stok DESC LIMIT 1";
+        $resultStok = mysqli_query($con, $queryStok);
+        $dataStok = mysqli_fetch_array($resultStok);
+        $jumlahStok = $dataStok['stok_produk'];
+
+        echo $jumlahStok;
+    ?>
+
     <!-- Vendor JS Files -->
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/aos/aos.js"></script>
@@ -338,25 +355,46 @@ error_reporting(E_ALL);
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const minusBtn = document.querySelector('.btn-book-a-table minus');
-        const plusBtn = document.querySelector('.btn-book-a-table plus');
-        const quantityInput = document.querySelector('.quantity-input');
+        const minusBtn = document.querySelector('.btn-book-a-table-minus');
+        const plusBtn = document.querySelector('.btn-book-a-table-plus');
+        const quantityInput = document.querySelector('input[name="qty"]');
+        const stok = <?php echo $jumlahStok; ?>;
+        const warningMessage = document.querySelector('.warning');
+        const keranjangButton = document.querySelector('button[name="keranjang"]');
 
         minusBtn.addEventListener('click', function() {
             let value = parseInt(quantityInput.value);
             if (value > 1) {
                 value--;
                 quantityInput.value = value;
+                updateWarningMessage(value);
             }
+            updateButtonState(value);
         });
 
         plusBtn.addEventListener('click', function() {
             let value = parseInt(quantityInput.value);
             value++;
             quantityInput.value = value;
+            updateWarningMessage(value);
+            updateButtonState(value);
         });
+
+        function updateWarningMessage(value) {
+            if (value > stok) {
+                warningMessage.textContent = "Stok saat ini tersisa " + stok + " pcs";
+            } else {
+                warningMessage.textContent = "";
+            }
+        }
+
+        function updateButtonState(value) {
+            minusBtn.disabled = value <= 1;
+            keranjangButton.disabled = value > stok;
+        }
     });
     </script>
+
 
 </body>
 
