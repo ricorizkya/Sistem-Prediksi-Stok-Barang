@@ -377,7 +377,7 @@ error_reporting(E_ALL);
                                 </thead>
                                 <tbody>
                                     <?php
-                                        $queryProses = "SELECT * FROM tb_penjualan LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk WHERE id_user=$IDUser AND status_pesanan='Diproses' ORDER BY tgl DESC, id_user";
+                                        $queryProses = "SELECT * FROM tb_penjualan LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk WHERE id_user=$IDUser AND status_pesanan!='Selesai' ORDER BY tgl DESC, id_user";
                                         $resultProses = mysqli_query($con, $queryProses);
 
                                         if (mysqli_num_rows($resultProses) > 0) {
@@ -447,7 +447,7 @@ error_reporting(E_ALL);
                                                 class='img-fluid' alt='' data-aos='zoom-out' data-aos-delay='300' style='width: 200px; height: 200px;'></td>";
                                                 echo "<td>" . $lastStatusPembayaran . "</td>";
                                                 echo "<td>" . $lastStatusPesanan . "</td>";
-                                                echo "<td>" . $lastResiPengiriman . "</td>";
+                                                echo "<td>J&T - " . $lastResiPengiriman . "</td>";
                                                 echo "</tr>";
                                             }
 
@@ -486,16 +486,16 @@ error_reporting(E_ALL);
                             </thead>
                             <tbody>
                                 <?php
-                                        $queryProses = "SELECT * FROM tb_penjualan LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk WHERE id_user=$IDUser AND status_pesanan='Selesai' ORDER BY tgl DESC, id_user";
-                                        $resultProses = mysqli_query($con, $queryProses);
+                                        $querySelesai = "SELECT * FROM tb_penjualan LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk WHERE id_user=$IDUser AND status_pesanan='Selesai' ORDER BY tgl DESC, id_user";
+                                        $resultSelesai = mysqli_query($con, $querySelesai);
 
-                                        if (mysqli_num_rows($resultProses) > 0) {
+                                        if (mysqli_num_rows($resultSelesai) > 0) {
                                             $currentDate = null;
                                             $currentUserID = null;
                                             $no = 1;
 
-                                            while ($dataProses = mysqli_fetch_array($resultProses)) {
-                                                if ($dataProses['tgl'] != $currentDate || $dataProses['id_user'] != $currentUserID) {
+                                            while ($dataSelesai = mysqli_fetch_array($resultSelesai)) {
+                                                if ($dataSelesai['tgl'] != $currentDate || $dataSelesai['id_user'] != $currentUserID) {
                                                     // Tampilkan baris baru untuk tanggal dan ID user baru
                                                     if ($currentDate != null) {
                                                         echo "<tr>";
@@ -508,41 +508,41 @@ error_reporting(E_ALL);
                                                         echo "</tr>";
                                                     }
                                                 
-                                                    $currentDate = $dataProses['tgl'];
-                                                    $currentUserID = $dataProses['id_user'];
-                                                    $totalHarga = $dataProses['total_pembayaran'];
-                                                    $buktiPembayaran = $dataProses['bukti_pembayaran'];
-                                                    $statusPembayaran = $dataProses['status_pembayaran'];
-                                                    $statusPesanan = $dataProses['status_pesanan'];
-                                                    $firstIDPenjualan = $dataProses['id_penjualan'];
-                                                    $firstProductName = $dataProses['nama_produk'];
-                                                    $firstProductQuantity = $dataProses['jumlah'];
-                                                    $firstTotalHarga = $dataProses['total_pembayaran'];
-                                                    $firstBuktiPembayaran = $dataProses['bukti_pembayaran'];
-                                                    $firstStatusPembayaran = $dataProses['status_pembayaran'];
-                                                    $firstStatusPesanan = $dataProses['status_pesanan'];
-                                                    $firstResiPengiriman = $dataProses['resi_pengiriman'];
+                                                    $currentDate = $dataSelesai['tgl'];
+                                                    $currentUserID = $dataSelesai['id_user'];
+                                                    $totalHarga = $dataSelesai['total_pembayaran'];
+                                                    $buktiPembayaran = $dataSelesai['bukti_pembayaran'];
+                                                    $statusPembayaran = $dataSelesai['status_pembayaran'];
+                                                    $statusPesanan = $dataSelesai['status_pesanan'];
+                                                    $firstIDPenjualan = $dataSelesai['id_penjualan'];
+                                                    $firstProductName = $dataSelesai['nama_produk'];
+                                                    $firstProductQuantity = $dataSelesai['jumlah'];
+                                                    $firstTotalHarga = $dataSelesai['total_pembayaran'];
+                                                    $firstBuktiPembayaran = $dataSelesai['bukti_pembayaran'];
+                                                    $firstStatusPembayaran = $dataSelesai['status_pembayaran'];
+                                                    $firstStatusPesanan = $dataSelesai['status_pesanan'];
+                                                    $firstResiPengiriman = $dataSelesai['resi_pengiriman'];
                                                 
-                                                    $lastDate = $dataProses['tgl'];
-                                                    $lastIDPenjualan = $dataProses['id_penjualan'];
-                                                    $lastProductName = $dataProses['nama_produk'];
-                                                    $lastProductQuantity = $dataProses['jumlah'];
-                                                    $lastTotalHarga = $dataProses['total_pembayaran'];
-                                                    $lastBuktiPembayaran = $dataProses['bukti_pembayaran'];
-                                                    $lastStatusPembayaran = $dataProses['status_pembayaran'];
-                                                    $lastStatusPesanan = $dataProses['status_pesanan'];
-                                                    $lastResiPengiriman = $dataProses['resi_pengiriman'];
+                                                    $lastDate = $dataSelesai['tgl'];
+                                                    $lastIDPenjualan = $dataSelesai['id_penjualan'];
+                                                    $lastProductName = $dataSelesai['nama_produk'];
+                                                    $lastProductQuantity = $dataSelesai['jumlah'];
+                                                    $lastTotalHarga = $dataSelesai['total_pembayaran'];
+                                                    $lastBuktiPembayaran = $dataSelesai['bukti_pembayaran'];
+                                                    $lastStatusPembayaran = $dataSelesai['status_pembayaran'];
+                                                    $lastStatusPesanan = $dataSelesai['status_pesanan'];
+                                                    $lastResiPengiriman = $dataSelesai['resi_pengiriman'];
                                                 } else {
                                                     // Update nama produk dan jumlah produk terakhir dari row ini
-                                                    $lastDate = $dataProses['tgl'];
-                                                    $lastIDPenjualan = $dataProses['id_penjualan'];
-                                                    $lastProductName = $dataProses['nama_produk'];
-                                                    $lastProductQuantity = $dataProses['jumlah'];
-                                                    $lastTotalHarga = $dataProses['total_pembayaran'];
-                                                    $lastBuktiPembayaran = $dataProses['bukti_pembayaran'];
-                                                    $lastStatusPembayaran = $dataProses['status_pembayaran'];
-                                                    $lastStatusPesanan = $dataProses['status_pesanan'];
-                                                    $lastResiPengiriman = $dataProses['resi_pengiriman'];
+                                                    $lastDate = $dataSelesai['tgl'];
+                                                    $lastIDPenjualan = $dataSelesai['id_penjualan'];
+                                                    $lastProductName = $dataSelesai['nama_produk'];
+                                                    $lastProductQuantity = $dataSelesai['jumlah'];
+                                                    $lastTotalHarga = $dataSelesai['total_pembayaran'];
+                                                    $lastBuktiPembayaran = $dataSelesai['bukti_pembayaran'];
+                                                    $lastStatusPembayaran = $dataSelesai['status_pembayaran'];
+                                                    $lastStatusPesanan = $dataSelesai['status_pesanan'];
+                                                    $lastResiPengiriman = $dataSelesai['resi_pengiriman'];
                                                 }
                                             }
 
@@ -556,7 +556,7 @@ error_reporting(E_ALL);
                                                 class='img-fluid' alt='' data-aos='zoom-out' data-aos-delay='300' style='width: 200px; height: 200px;'></td>";
                                                 echo "<td>" . $lastStatusPembayaran . "</td>";
                                                 echo "<td>" . $lastStatusPesanan . "</td>";
-                                                echo "<td>" . $lastResiPengiriman . "</td>";
+                                                echo "<td>J&T - " . $lastResiPengiriman . "</td>";
                                                 echo "</tr>";
                                             }
 
@@ -749,7 +749,7 @@ error_reporting(E_ALL);
             "Bukti Pembayaran<br>" + buktiPembayaranImage + "<br><br>" +
             "Status Pembayaran<br><b> " + lastStatusPembayaran + "</b><br><br>" +
             "Status Pesanan<br><b>" + lastStatusPesanan + "</b><br><br>" +
-            "Resi Pengiriman<br><b>" + lastResiPengiriman + "</b><br><br>";
+            "Resi Pengiriman<br><b>J&T - " + lastResiPengiriman + "</b><br><br>";
 
         firstID.value = firstIDPenjualan;
         lastID.value = lastIDPenjualan;

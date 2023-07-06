@@ -332,6 +332,18 @@ error_reporting(E_ALL);
                         </table>
                         <div class="form-outline mb-4">
                             <div class="form-outline">
+                                <label for="formFile" class="form-label">Masukkan Nomor Rekening</label>
+                                <input class="form-control" type="number" id="formFile" name="norek">
+                            </div>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <div class="form-outline">
+                                <label for="formFile" class="form-label">Masukkan Atas Nama Rekening</label>
+                                <input class="form-control" type="text" id="formFile" name="atas_nama">
+                            </div>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <div class="form-outline">
                                 <label for="formFile" class="form-label">Upload Bukti Transfer <i>(Format .jpg, .jpeg,
                                         .png)</i></label>
                                 <input class="form-control" type="file" id="formFile" name="bukti">
@@ -382,6 +394,8 @@ error_reporting(E_ALL);
 
         $tglSekarang = date("Y-m-d H:i:s");
 
+        $norek = $_POST['norek'];
+        $atasNama = $_POST['atas_nama'];
         $ekstensi = array('png','jpg','jpeg');
         $filename = $_FILES['bukti']['name'];
         $size     = $_FILES['bukti']['size'];
@@ -432,7 +446,7 @@ error_reporting(E_ALL);
                             $totalSemua += $totalHarga;
                             $hargaFix = $totalSemua+$ongkir;
 
-                                        $queryPenjualan = mysqli_query($con,"INSERT INTO tb_penjualan(tgl,id_admin,id_user,id_produk,jumlah,total_pembayaran,bukti_pembayaran,status_pembayaran,status_pesanan,resi_pengiriman) VALUES ('$tglSekarang','1','$idUser','$idProduk','$QYTBarang','$hargaFix','$filename','Dibayar','Diproses','-')");
+                                        $queryPenjualan = mysqli_query($con,"INSERT INTO tb_penjualan(tgl,id_admin,id_user,id_produk,jumlah,total_pembayaran,bukti_pembayaran,status_pembayaran,rekening,atas_nama,status_pesanan,resi_pengiriman) VALUES ('$tglSekarang','1','$idUser','$idProduk','$QYTBarang','$hargaFix','$filename','Dibayar','$norek','$atasNama','Menunggu Konfirmasi','-')");
 
                                         if($queryPenjualan) {
                                             $stokBaru = $stokBarang - $QYTBarang;

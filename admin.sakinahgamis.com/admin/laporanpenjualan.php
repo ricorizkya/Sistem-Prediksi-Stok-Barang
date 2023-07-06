@@ -337,7 +337,7 @@ $tahun = isset($_POST['tahun']);
             }elseif($fuzzy_no_produksi ==0 && $fuzzy_produksi_sedikit == 0 && $fuzzy_produksi_sedang != 0 && $fuzzy_produksi_banyak != 0) {
                 $hasil = 6 / (($fuzzy_produksi_sedang/$fuzzy_produksi_banyak) + 1);
             }else {
-                $hasil = 999;
+                $hasil = 3;
             }
             
             // if($fuzzy_produksi_sedikit != 0 && $fuzzy_produksi_sedang == 0 && $fuzzy_produksi_banyak == 0) {

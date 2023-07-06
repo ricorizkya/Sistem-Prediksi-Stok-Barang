@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 if (empty($_SESSION['username'])){
     session_destroy();
@@ -137,10 +140,6 @@ if (empty($_SESSION['username'])){
                 </ol>
             </nav>
         </div><!-- End Page Title -->
-        <?php
-      $query1="select * from tb_penjualan left join tb_produk on tb_penjualan.id_produk = tb_produk.id_produk ORDER BY id_penjualan DESC";
-      $tampil=mysqli_query($con,$query1);
-  ?>
         <!-- table section -->
         <div class="br-pagebody" style="margin: auto;">
             <div class="br-section-wrapper" style="padding: 20px;">
@@ -179,49 +178,50 @@ if (empty($_SESSION['username'])){
                                                 <th scope>Tanggal Order</th>
                                                 <th scope>Nama Pelanggan</th>
                                                 <th scope>Pesanan</th>
-                                                <th scope>Jumlah Pesanan</th>
-                                                <th scope>Total</th>
-                                                <th scope>Status</th>
+                                                <th scope>Total Pembayaran</th>
+                                                <th scope>Status Pembayaran</th>
+                                                <th scope>Status Pesanan</th>
+                                                <th scope>Resi Pengiriman</th>
                                                 <th scope>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                      $no=0;
-                      while($data=mysqli_fetch_array($tampil))
-                      {
-                        $no++;
-                        $nama = $data['nama_produk'];
-                        $id_user = $data['id_user'];
-                        $query_user = mysqli_query($con,"SELECT * FROM tb_user WHERE id_user=$id_user");
-                        $data_user = mysqli_fetch_array($query_user);
-                  ?>
-                                            <tr>
-                                                <td scope><?php echo $no;?></td>
-                                                <td scope><?php echo $data['tgl']; ?></td>
-                                                <td scope><?php echo $data_user['nama_user'];?></td>
-                                                <td scope><?php echo $nama;?>
-                                                </td>
-                                                <td scope><?php echo $data['jumlah'];?> PCS</td>
-                                                <td scope>
-                                                    Rp<?php echo number_format($data['total_pembayaran'],0,'','.');?>,-
-                                                </td>
-                                                <td scope><?php echo $data['status_pembayaran'];?></td>
-                                                <td scope>
-                                                    <?php 
-                                                        if($data['status_pembayaran'] == "Dibayar") {
-                                                            echo "<a href='detailpesanan.php'
-                                                    role='button' class='btn btn-secondary disabled'>Proses</a>";
+                                                $query1="SELECT tgl, tb_penjualan.id_user, GROUP_CONCAT(CONCAT(nama_produk, ' - ', jumlah, ' pcs') SEPARATOR ' | ') AS nama_pesanan, 
+                                                MAX(total_pembayaran) AS total_harga, GROUP_CONCAT(id_penjualan) AS id_penjualan, nama_user, bukti_pembayaran, status_pembayaran, 
+                                                status_pesanan, resi_pengiriman 
+                                                FROM tb_penjualan 
+                                                LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk 
+                                                LEFT JOIN tb_user ON tb_penjualan.id_user = tb_user.id_user 
+                                                GROUP BY tgl, tb_penjualan.id_user 
+                                                ORDER BY tgl DESC, tb_penjualan.id_user";
+                                                $tampil=mysqli_query($con,$query1);
+
+                                                // Menampilkan data dalam tabel
+                                                $no = 1;
+                                                while ($row = mysqli_fetch_assoc($tampil)) {
+                                                    echo '<tr>';
+                                                    echo '<th scope="row">' . $no++ . '</th>';
+                                                    echo '<td>' . $row['tgl'] . '</td>';
+                                                    echo '<td>' . $row['nama_user'] . '</td>';
+                                                    echo '<td>' . $row['nama_pesanan'] . '</td>';
+                                                    echo '<td>Rp ' . number_format($row['total_harga'],0,',','.') . ',-</td>';
+                                                    echo '<td>' . $row['status_pembayaran'] . '</td>';
+                                                    echo '<td>' . $row['status_pesanan'] . '</td>';
+                                                    echo '<td>' . $row['resi_pengiriman'] . '</td>';
+                                                    if($row['status_pesanan'] == 'Selesai') {
+                                                        echo '<td><a class="btn btn-sm btn-primary" data-placement="bottom"
+                                                        data-toggle="tooltip" title="Edit Produk"
+                                                        href="detailpesanan.php?hal=edit&kd=' .$row['id_penjualan']. '">Detail</a></td>';
                                                     }else {
-                                                    echo "<a href='detailpesanan.php?hal=detail&kd=".$data['id_penjualan']."' role='button'
-                                                        class='btn btn-success'>Proses</a>";
+                                                        echo '<td><a class="btn btn-sm btn-success" data-placement="bottom"
+                                                        data-toggle="tooltip" title="Edit Produk"
+                                                        href="detailpesanan.php?hal=edit&kd=' .$row['id_penjualan']. '">Proses</a></td>';
                                                     }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <?php
-                      }
-                      ?>
+                                            echo '</tr>';
+                                            }
+                                            ?>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -232,20 +232,6 @@ if (empty($_SESSION['username'])){
                 </section>
 
     </main><!-- end content -->
-
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-        <div class="copyright">
-            &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-    </footer><!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
             class="bi bi-arrow-up-short"></i></a>

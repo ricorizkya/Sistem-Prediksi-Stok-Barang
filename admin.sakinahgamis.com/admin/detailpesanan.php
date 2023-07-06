@@ -1,4 +1,7 @@
 <?php 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 include '../koneksi.php';
 global $con;
@@ -8,6 +11,15 @@ if (empty($_SESSION['username'])){
 } else {
 	include "../koneksi.php";
 }
+
+$idPenjualan = $_GET['kd'];
+$idArray = explode(',', $idPenjualan);
+
+$idArray1 = $idArray[0];
+$idArray2 = $idArray[1];
+// $idArray3 = $idArray[2];
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +87,7 @@ if (empty($_SESSION['username'])){
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
                             <h6><?php echo $_SESSION['username']; ?></h6>
-                            <span>Administrator</span>
+                            <span>Administrato<?php echo $idArray; ?>r</span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -122,14 +134,12 @@ if (empty($_SESSION['username'])){
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                    <li class="breadcrumb-item"><a href="detailpesanan.php">Detail Pesanan</a></li>
+                    <li class="breadcrumb-item"><a href="datapenjualan.php">Data Penjualan</a></li>
+                    <li class="breadcrumb-item">Detail Pesanan</li>
                 </ol>
             </nav>
         </div><!-- End Page Title -->
-        <?php
-               $query = mysqli_query($con,"select * from tb_penjualan left join tb_produk on tb_penjualan.id_produk = tb_produk.id_produk where id_penjualan='$_GET[kd]'");
-               $data  = mysqli_fetch_array($query);
-               ?>
+
         <section class="section profile">
             <div class="row">
 
@@ -148,84 +158,161 @@ if (empty($_SESSION['username'])){
                             </ul>
 
                             <div class="panel-body">
-                                <table id="example" class="table table-borderless">
 
-                                    <tr>
-                                        <td style="width:25%">Tanggal Pesanan</td>
-                                        <td><?php 
-        echo $data['tgl']; 
-    ?></td>
-                                    </tr>
+                                <?php
 
-                                    <tr>
-                                        <td>Nama Pelanggan</td>
-                                        <td><?php 
-        $id_user = $data['id_user'];
-        $query_user = mysqli_query($con,"SELECT * FROM tb_user WHERE id_user=$id_user");
-        $data_user = mysqli_fetch_array($query_user);
-        echo $data_user['nama_user']; 
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nomor Telepon Pelanggan</td>
-                                        <td><?php 
-        echo $data_user['telp_user'];
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Email Pelanggan</td>
-                                        <td><?php 
-        echo $data_user['email_user'];
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Alamat Pelanggan</td>
-                                        <td><?php 
-        echo $data_user['alamat_user']; 
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nama Pesanan</td>
-                                        <td><?php 
-        $id_produk = $data['id_produk'];
-        $query_produk = mysqli_query($con,"SELECT * FROM tb_produk WHERE id_produk=$id_produk");
-        $data_produk = mysqli_fetch_array($query_produk);
-        echo $data_produk['nama_produk'];  
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jumlah Pesanan</td>
-                                        <td><?php 
-        if($data['jumlah']>0){
-            echo $data['jumlah']." PCS";
-        }else {
-            echo "0 PCS";
-        } 
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Total Pembayaran</td>
-                                        <td><?php 
-        echo "Rp ".number_format($data['total_pembayaran'],2,',','.'); 
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Status Pembayaran</td>
-                                        <td><?php 
-        echo $data['status_pembayaran']; 
-    ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bukti Pembayaran</td>
-                                        <td><?php 
-        if($dataAll['stok_produk']>0){
-            echo $dataAll['stok_produk']." PCS";
-        }else {
-            echo "0 PCS";
-        } 
-    ?></td>
-                                    </tr>
-                                </table>
+                                    $queryPenjualan = mysqli_query($con, "SELECT id_penjualan, tgl, tb_penjualan.id_user, GROUP_CONCAT(CONCAT(id_penjualan) SEPARATOR ' , ') AS id_penjualan, GROUP_CONCAT(CONCAT(nama_produk, ' - ', jumlah, ' pcs') SEPARATOR ' | ') AS nama_pesanan, MAX(total_pembayaran) AS total_harga, nama_user, telp_user, email_user, alamat_user, bukti_pembayaran, status_pembayaran, status_pesanan, resi_pengiriman FROM tb_penjualan LEFT JOIN tb_produk ON tb_penjualan.id_produk = tb_produk.id_produk LEFT JOIN tb_user ON tb_penjualan.id_user = tb_user.id_user WHERE id_penjualan='$idArray1' OR id_penjualan='$idArray2' GROUP BY tgl, tb_penjualan.id_user ORDER BY tgl DESC, tb_penjualan.id_user");
+                                        
+                                    $resultPenjualan = mysqli_fetch_array($queryPenjualan);
+                                ?>
+
+                                <form action="" method="post">
+                                    <table id="example" class="table table-borderless">
+
+                                        <tr>
+                                            <td style="width:25%">Tanggal Pesanan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['tgl']; 
+                                        ?></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Nama Pelanggan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['nama_user']; 
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nomor Telepon Pelanggan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['telp_user'];
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email Pelanggan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['email_user'];
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Alamat Pelanggan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['alamat_user']; 
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nama Pesanan</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['nama_pesanan'];  
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Pembayaran</td>
+                                            <td><?php 
+                                            echo "Rp ".number_format($resultPenjualan['total_harga'],2,',','.'); 
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status Pembayaran</td>
+                                            <td><?php 
+                                            echo $resultPenjualan['status_pembayaran']; 
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bukti Pembayaran</td>
+                                            <td><img src="gambar/bukti/<?php 
+                                                echo $resultPenjualan['bukti_pembayaran'];
+                                        ?>" alt="" style="width: 200px; height: 200px;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status Pesanan</td>
+                                            <td><?php 
+                                                echo $resultPenjualan['status_pesanan'];
+                                        ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Resi Pengiriman</td>
+                                            <td><?php 
+                                                echo $resultPenjualan['resi_pengiriman'];
+                                        ?></td>
+                                        </tr>
+                                    </table>
+                                    <?php
+                                        if($resultPenjualan['status_pesanan'] == 'Selesai') {
+                                            echo "";
+                                        }else {
+                                    ?>
+                                    <button type="submit" class="btn btn-success" style="width: 100%;"
+                                        name="prosesPesanan">
+                                        Proses Pesanan
+                                    </button>
+                                    <?php } ?>
+                                </form>
+
+                                <?php
+                                    if(isset($_POST['prosesPesanan'])) {
+                                ?>
+                                <br><br>
+                                <form class="form-horizontal style-form" action="" method="post" name="prosesPes"
+                                    id="form1">
+                                    <div class="form-group">
+                                        <label class="col-sm-8 col-sm-8 control-label">Status Pembayaran</label>
+                                        <div class="col-sm-12">
+                                            <select class="form-control mb-3" name="statusPem" id="kategori">
+                                                <option value="Dibayar">Dibayar</option>
+                                                <option value="Nominal Tidak Sesuai">Nominal Tidak Sesuai</option>
+                                                <option value="Dana Tidak Masuk">Dana Tidak Masuk</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-8 col-sm-8 control-label">Status Pesanan</label>
+                                        <div class="col-sm-12">
+                                            <select class="form-control mb-3" name="statusPesan" id="kategori">
+                                                <option value="Menunggu Konfirmasi">Menunggu Konfirmasi</option>
+                                                <option value="Diproses">Diproses</option>
+                                                <option value="Dalam Perjalanan">Dalam Perjanalan</option>
+                                                <option value="Selesai">Selesai</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-8 col-sm-8 control-label">Resi Pengiriman</label>
+                                        <div class="col-sm-12">
+                                            <input name="resi" type="number" id="harga" class="form-control mb-3"
+                                                placeholder="Input Nomor Resi J&T" required />
+
+                                            <input type="hidden" name="id_penj1" id="" value="<?= $idArray1; ?>">
+                                            <input type="hidden" name="id_penj2" id="" value="<?= $idArray2; ?>">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" name="updatePenj">Simpan</button>
+                                </form>
+
+                                <?php
+                                    }else {
+                                        echo "";
+                                    }
+                                ?>
+
+                                <?php
+                                    if(isset($_POST['updatePenj'])) {
+                                        $idPenj1 = $_POST['id_penj1'];
+                                        $idPenj2 = $_POST['id_penj2'];
+                                        $statusPem = $_POST['statusPem'];
+                                        $statusPes = $_POST['statusPesan'];
+                                        $resi = $_POST['resi'];
+                                        
+                                        $queryUpdate = mysqli_query($con, "UPDATE tb_penjualan SET status_pembayaran='$statusPem', status_pesanan='$statusPes', resi_pengiriman='$resi' WHERE id_penjualan=$idPenj1 OR id_penjualan=$idPenj2");
+                                        
+                                        if($queryUpdate) {
+                                            echo "<script>alert('Pesanan Berhasil Di Update'); window.location.href = 'datapenjualan.php';</script>";
+                                        }else {
+                                            echo "<script>alert('Pesanan Gagal Di Update');</script>";
+                                        }
+                                    }
+                                ?>
+
                             </div>
                         </div>
                     </div>
